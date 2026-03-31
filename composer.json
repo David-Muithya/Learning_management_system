@@ -1,0 +1,14 @@
+{
+    "name": "skillmaster/lms",
+    "description": "Learning Management System - Final Year Project",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    },
+    "authors": [
+        {
+            "name": "David Muithya",
+            "email": "musyimimuithya3@gmail.com"
+        }
+    ]
+}
