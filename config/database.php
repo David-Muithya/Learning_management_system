@@ -1,69 +1,39 @@
 <?php
-// Database configuration
-// Developer: DAVID MUITHYA
-// Final Year Project - LMS
+// Database Configuration
+// Returns a PDO database connection
 
-class Database {
-    private $host = DB_HOST;
-    private $dbname = DB_NAME;
-    private $username = DB_USER;
-    private $password = DB_PASS;
-    private $charset = DB_CHARSET;
-    private $pdo;
-    private static $instance = null;
-
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+function getDBConnection() {
+    static $connection = null;
+    
+    if ($connection === null) {
         try {
-            $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset={$this->charset}";
-            $this->pdo = new PDO($dsn, $this->username, $this->password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $dsn = sprintf(
+                'mysql:host=%s;dbname=%s;charset=%s',
+                DB_HOST,
+                DB_NAME,
+                DB_CHARSET
+            );
+            
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET
+            ];
+            
+            $connection = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
-            error_log("Database Connection Error: " . $e->getMessage());
-            die("Database connection failed. Please check your configuration.");
+            if (DEBUG_MODE) {
+                die("Database connection failed: " . $e->getMessage());
+            } else {
+                error_log("Database connection failed: " . $e->getMessage());
+                die("A database error occurred. Please try again later.");
+            }
         }
     }
-
-    public function getConnection() {
-        return $this->pdo;
-    }
-
-    public function query($sql, $params = []) {
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
-            return $stmt;
-        } catch (PDOException $e) {
-            error_log("Query Error: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    public function lastInsertId() {
-        return $this->pdo->lastInsertId();
-    }
-
-    public function beginTransaction() {
-        return $this->pdo->beginTransaction();
-    }
-
-    public function commit() {
-        return $this->pdo->commit();
-    }
-
-    public function rollback() {
-        return $this->pdo->rollBack();
-    }
-
-    private function __clone() {}
-    public function __wakeup() {}
+    
+    return $connection;
 }
-?>
+
+// Global database connection variable (backward compatibility)
+$conn = getDBConnection();

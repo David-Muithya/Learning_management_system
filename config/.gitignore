@@ -1,0 +1,30 @@
+# Environment
+.env
+.env.local
+
+# Dependencies
+/vendor/
+/composer.lock
+
+# Cache
+/cache/
+
+# Logs
+/logs/
+*.log
+
+# Uploads
+/public/uploads/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp
