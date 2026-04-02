@@ -106,20 +106,20 @@ class Authenticator
     /**
      * Get redirect URL based on user role
      */
+
     public function getRoleRedirect($role)
-    {
-        switch ($role) {
-            case 'admin':
-                return '/admin/';
-            case 'instructor':
-                return '/instructor/';
-            case 'student':
-                return '/student/';
-            default:
-                return '/';
-        }
+{
+    switch ($role) {
+        case 'admin':
+            return '/Learning_management_system/public/admin/';
+        case 'instructor':
+            return '/Learning_management_system/public/instructor/';
+        case 'student':
+            return '/Learning_management_system/public/student/';
+        default:
+            return '/Learning_management_system/public/';
     }
-    
+}
     /**
      * Register a new student
      */

@@ -1,35 +1,39 @@
 <?php
-// Login Page - For Existing Students and Instructors
+// Forgot Password Page
 require_once __DIR__ . '/../config/config.php';
-use SkillMaster\Auth\Authenticator;
+use SkillMaster\Auth\PasswordReset;
 use SkillMaster\Auth\RoleMiddleware;
+use SkillMaster\Helpers\Security;
 
 // Redirect if already logged in
 RoleMiddleware::requireGuest();
 
 $error = '';
+$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    
-    if (empty($email) || empty($password)) {
-        $error = 'Please enter both email and password';
+    // Verify CSRF token
+    if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid security token. Please try again.';
     } else {
-        $auth = new Authenticator();
-        $result = $auth->login($email, $password);
+        $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
         
-        if ($result['success']) {
-            // Redirect based on role
-            header('Location: ' . $result['redirect']);
-            exit;
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Please enter a valid email address.';
         } else {
-            $error = $result['message'];
+            $passwordReset = new PasswordReset();
+            $result = $passwordReset->sendResetLink($email);
+            
+            if ($result['success']) {
+                $success = $result['message'];
+            } else {
+                $error = $result['message'];
+            }
         }
     }
 }
 
-$page_title = 'Login - ' . APP_NAME;
+$page_title = 'Forgot Password - ' . APP_NAME;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,34 +72,24 @@ $page_title = 'Login - ' . APP_NAME;
                 <a href="index.php" class="nav-item nav-link">Home</a>
                 <a href="about.php" class="nav-item nav-link">About</a>
                 <a href="courses.php" class="nav-item nav-link">Courses</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                        <a href="testimonials.php" class="dropdown-item">Testimonials</a>
-                        <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
-                    </div>
-                </div>
                 <a href="contact.php" class="nav-item nav-link">Contact</a>
-                <a href="login.php" class="nav-item nav-link active">Login</a>
+                <a href="login.php" class="nav-item nav-link">Login</a>
+                <a href="register.php" class="nav-item nav-link">Register</a>
             </div>
-            <a href="register.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                Join Now<i class="fa fa-arrow-right ms-3"></i>
-            </a>
         </div>
     </nav>
     <!-- Navbar End -->
 
-    <!-- Login Form Start -->
+    <!-- Forgot Password Form Start -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="bg-light rounded p-5 shadow">
                         <div class="text-center mb-4">
-                            <i class="fa fa-sign-in-alt fa-3x text-primary mb-3"></i>
-                            <h1 class="display-6">Welcome Back!</h1>
-                            <p class="text-muted">Login to access your account</p>
+                            <i class="fa fa-key fa-3x text-primary mb-3"></i>
+                            <h1 class="display-6">Forgot Password?</h1>
+                            <p class="text-muted">Enter your email address and we'll send you a link to reset your password.</p>
                         </div>
                         
                         <?php if ($error): ?>
@@ -105,40 +99,38 @@ $page_title = 'Login - ' . APP_NAME;
                             </div>
                         <?php endif; ?>
                         
-                        <form method="POST" action="">
-                            <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
-                                <label for="email">Email address</label>
+                        <?php if ($success): ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fa fa-check-circle me-2"></i><?php echo htmlspecialchars($success); ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                            
-                            <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                                <label for="password">Password</label>
+                            <div class="text-center mt-3">
+                                <a href="login.php" class="btn btn-primary">Back to Login</a>
                             </div>
-                            
-                            <div class="d-flex justify-content-between mb-4">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                                    <label class="form-check-label" for="remember">Remember me</label>
+                        <?php else: ?>
+                            <form method="POST" action="">
+                                <?php echo Security::csrfField(); ?>
+                                
+                                <div class="form-floating mb-4">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                                    <label for="email">Email Address</label>
                                 </div>
-                                <a href="forgot-password.php" class="text-primary">Forgot Password?</a>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
-                                <i class="fa fa-sign-in-alt me-2"></i>Login
-                            </button>
-                            
-                            <div class="text-center">
-                                <p class="mb-0">Don't have an account? <a href="register.php" class="text-primary">Create Account</a></p>
-                                <p class="mb-0 mt-2">Want to teach? <a href="apply-instructor.php" class="text-primary">Apply as Instructor</a></p>
-                            </div>
-                        </form>
+                                
+                                <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                                    <i class="fa fa-paper-plane me-2"></i>Send Reset Link
+                                </button>
+                                
+                                <div class="text-center">
+                                    <p class="mb-0">Remember your password? <a href="login.php" class="text-primary">Back to Login</a></p>
+                                </div>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Login Form End -->
+    <!-- Forgot Password Form End -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

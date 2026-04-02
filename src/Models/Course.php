@@ -138,6 +138,143 @@ class Course
         return $stmt->fetchAll();
     }
     
+        /**
+     * Get courses by instructor
+     */
+    public function getByInstructor($instructorId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM {$this->table} 
+            WHERE instructor_id = ? AND deleted_at IS NULL
+            ORDER BY created_at DESC
+        ");
+        $stmt->execute([$instructorId]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Create a new course
+     */
+    public function createCourse($data, $instructorId)
+    {
+        // Generate slug from title
+        $slug = $this->generateSlug($data['title']);
+        
+        // Generate course code
+        $code = $this->generateCourseCode($data['title'], $instructorId);
+        
+        $stmt = $this->db->prepare("
+            INSERT INTO {$this->table} 
+            (title, slug, code, description, short_description, category_id, instructor_id, 
+             price, thumbnail, credits, start_date, end_date, status, max_students, 
+             syllabus, created_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+        
+        return $stmt->execute([
+            $data['title'],
+            $slug,
+            $code,
+            $data['description'] ?? null,
+            $data['short_description'] ?? null,
+            $data['category_id'] ?? null,
+            $instructorId,
+            $data['price'] ?? 0,
+            $data['thumbnail'] ?? null,
+            $data['credits'] ?? 3,
+            $data['start_date'] ?? null,
+            $data['end_date'] ?? null,
+            'draft',
+            $data['max_students'] ?? 50,
+            $data['syllabus'] ?? null,
+            $instructorId
+        ]);
+    }
+    
+    /**
+     * Update course
+     */
+    public function updateCourse($id, $data)
+    {
+        $fields = [];
+        $params = [];
+        
+        $allowedFields = ['title', 'description', 'short_description', 'category_id', 'price', 
+                          'credits', 'start_date', 'end_date', 'max_students', 'syllabus', 'thumbnail'];
+        
+        foreach ($allowedFields as $field) {
+            if (isset($data[$field])) {
+                $fields[] = "$field = ?";
+                $params[] = $data[$field];
+            }
+        }
+        
+        if (isset($data['title'])) {
+            $fields[] = "slug = ?";
+            $params[] = $this->generateSlug($data['title']);
+        }
+        
+        if (empty($fields)) {
+            return false;
+        }
+        
+        $params[] = $id;
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
+    
+    /**
+     * Submit course for approval
+     */
+    public function submitForApproval($id)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE {$this->table} SET status = 'pending_approval', updated_at = NOW() 
+            WHERE id = ? AND status = 'draft'
+        ");
+        return $stmt->execute([$id]);
+    }
+    
+    /**
+     * Generate slug from title
+     */
+    private function generateSlug($title)
+    {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
+        return $slug . '-' . uniqid();
+    }
+    
+    /**
+     * Generate course code
+     */
+    private function generateCourseCode($title, $instructorId)
+    {
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $title), 0, 3));
+        return $prefix . '-' . str_pad($instructorId, 3, '0', STR_PAD_LEFT) . '-' . rand(100, 999);
+    }
+    
+    /**
+     * Get categories for dropdown
+     */
+    public function getCategories()
+    {
+        $stmt = $this->db->query("SELECT id, name FROM course_categories ORDER BY name");
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Get course by ID (without status check)
+     */
+    public function getById($id)
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM {$this->table} WHERE id = ? AND deleted_at IS NULL
+        ");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
     /**
      * Get related courses (same category)
      */
@@ -196,6 +333,94 @@ class Course
         ");
         $stmt->execute([$courseId, $studentId]);
         return $stmt->fetch() !== false;
+    }
+        /**
+     * Get pending courses count
+     */
+    public function getPendingCount()
+    {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count FROM {$this->table} 
+            WHERE status = 'pending_approval' AND deleted_at IS NULL
+        ");
+        $stmt->execute();
+        return $stmt->fetch()['count'];
+    }
+    
+    /**
+     * Get recent courses for admin dashboard
+     */
+    public function getRecentCourses($limit = 5)
+    {
+        $stmt = $this->db->prepare("
+            SELECT c.*, CONCAT(u.first_name, ' ', u.last_name) as instructor_name
+            FROM {$this->table} c
+            LEFT JOIN users u ON c.instructor_id = u.id
+            WHERE c.deleted_at IS NULL
+            ORDER BY c.created_at DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Get pending courses for admin review
+     */
+    public function getPendingCourses($page = 1, $perPage = 10)
+    {
+        $offset = ($page - 1) * $perPage;
+        
+        $stmt = $this->db->prepare("
+            SELECT c.*, CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+                   u.email as instructor_email
+            FROM {$this->table} c
+            LEFT JOIN users u ON c.instructor_id = u.id
+            WHERE c.status = 'pending_approval' AND c.deleted_at IS NULL
+            ORDER BY c.created_at ASC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$perPage, $offset]);
+        $courses = $stmt->fetchAll();
+        
+        // Get total count
+        $stmt = $this->db->query("
+            SELECT COUNT(*) as total FROM {$this->table} 
+            WHERE status = 'pending_approval' AND deleted_at IS NULL
+        ");
+        $total = $stmt->fetch()['total'];
+        
+        return [
+            'courses' => $courses,
+            'total' => $total,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
+    
+    /**
+     * Approve a course
+     */
+    public function approve($courseId, $adminId)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE {$this->table} SET status = 'published', updated_at = NOW() 
+            WHERE id = ? AND status = 'pending_approval'
+        ");
+        return $stmt->execute([$courseId]);
+    }
+    
+    /**
+     * Reject a course with reason
+     */
+    public function reject($courseId, $adminId, $reason = null)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE {$this->table} SET status = 'rejected', updated_at = NOW() 
+            WHERE id = ? AND status = 'pending_approval'
+        ");
+        return $stmt->execute([$courseId]);
     }
     
     /**

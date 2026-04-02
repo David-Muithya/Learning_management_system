@@ -65,42 +65,36 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
         </div>
     </div>
     <!-- Spinner End -->
-
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.php" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i><?php echo APP_NAME; ?></h2>
-        </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.php" class="nav-item nav-link active">Home</a>
-                <a href="about.php" class="nav-item nav-link">About</a>
-                <a href="courses.php" class="nav-item nav-link">Courses</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                        <a href="testimonials.php" class="dropdown-item">Testimonials</a>
-                        <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
-                    </div>
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+    <a href="index.php" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i><?php echo APP_NAME; ?></h2>
+    </a>
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto p-4 p-lg-0">
+            <a href="index.php" class="nav-item nav-link active">Home</a>
+            <a href="about.php" class="nav-item nav-link">About</a>
+            <a href="courses.php" class="nav-item nav-link">Courses</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                <div class="dropdown-menu fade-down m-0">
+                    <a href="instructors.php" class="dropdown-item">Our Instructors</a>
+                    <a href="testimonials.php" class="dropdown-item">Testimonials</a>
+                    <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
                 </div>
-                <a href="contact.php" class="nav-item nav-link">Contact</a>
             </div>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="<?php echo $_SESSION['user_role'] === 'admin' ? '/admin/' : ($_SESSION['user_role'] === 'instructor' ? '/instructor/' : '/student/'); ?>" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                    <i class="fa fa-user me-2"></i>Dashboard
-                </a>
-            <?php else: ?>
-                <a href="login.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                    Join Now<i class="fa fa-arrow-right ms-3"></i>
-                </a>
-            <?php endif; ?>
+            <a href="contact.php" class="nav-item nav-link">Contact</a>
         </div>
-    </nav>
-    <!-- Navbar End -->
+        <!-- Join Now button - Always visible, links to login page -->
+        <a href="login.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
+            Join Now<i class="fa fa-arrow-right ms-3"></i>
+        </a>
+    </div>
+</nav>
+<!-- Navbar End -->
 
     <!-- Carousel Start -->
     <div class="container-fluid p-0 mb-5">

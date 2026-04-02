@@ -1,49 +1,53 @@
 <?php
-// Student Registration Only
+// Reset Password Page
 require_once __DIR__ . '/../config/config.php';
-use SkillMaster\Auth\Authenticator;
+use SkillMaster\Auth\PasswordReset;
 use SkillMaster\Auth\RoleMiddleware;
+use SkillMaster\Helpers\Security;
 
 // Redirect if already logged in
 RoleMiddleware::requireGuest();
 
+$token = $_GET['token'] ?? $_POST['token'] ?? '';
 $error = '';
 $success = '';
-$formData = [];
+$validToken = false;
+$userEmail = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $formData = [
-        'first_name' => trim($_POST['first_name'] ?? ''),
-        'last_name' => trim($_POST['last_name'] ?? ''),
-        'email' => trim($_POST['email'] ?? ''),
-        'phone_number' => trim($_POST['phone_number'] ?? ''),
-        'password' => $_POST['password'] ?? '',
-        'confirm_password' => $_POST['confirm_password'] ?? ''
-    ];
+// Validate token first
+if (!empty($token)) {
+    $passwordReset = new PasswordReset();
+    $validation = $passwordReset->validateToken($token);
     
-    // Validation
-    if (empty($formData['first_name']) || empty($formData['last_name']) || empty($formData['email']) || empty($formData['password'])) {
-        $error = 'All fields are required';
-    } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address';
-    } elseif (strlen($formData['password']) < PASSWORD_MIN_LENGTH) {
-        $error = 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters';
-    } elseif ($formData['password'] !== $formData['confirm_password']) {
-        $error = 'Passwords do not match';
+    if ($validation['valid']) {
+        $validToken = true;
+        $userEmail = $validation['user']['email'];
     } else {
-        $auth = new Authenticator();
-        $result = $auth->registerStudent($formData);
+        $error = $validation['message'];
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $validToken) {
+    // Verify CSRF token
+    if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid security token. Please try again.';
+    } else {
+        $newPassword = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        
+        $passwordReset = new PasswordReset();
+        $result = $passwordReset->resetPassword($token, $newPassword, $confirmPassword);
         
         if ($result['success']) {
             $success = $result['message'];
-            $formData = [];
+            $validToken = false; // Don't show form after success
         } else {
             $error = $result['message'];
         }
     }
 }
 
-$page_title = 'Join SkillMaster - ' . APP_NAME;
+$page_title = 'Reset Password - ' . APP_NAME;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,34 +86,24 @@ $page_title = 'Join SkillMaster - ' . APP_NAME;
                 <a href="index.php" class="nav-item nav-link">Home</a>
                 <a href="about.php" class="nav-item nav-link">About</a>
                 <a href="courses.php" class="nav-item nav-link">Courses</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                        <a href="testimonials.php" class="dropdown-item">Testimonials</a>
-                        <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
-                    </div>
-                </div>
                 <a href="contact.php" class="nav-item nav-link">Contact</a>
                 <a href="login.php" class="nav-item nav-link">Login</a>
+                <a href="register.php" class="nav-item nav-link">Register</a>
             </div>
-            <a href="register.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block active">
-                Join Now<i class="fa fa-arrow-right ms-3"></i>
-            </a>
         </div>
     </nav>
     <!-- Navbar End -->
 
-    <!-- Register Form Start -->
+    <!-- Reset Password Form Start -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="bg-light rounded p-5 shadow">
                         <div class="text-center mb-4">
-                            <i class="fa fa-user-plus fa-3x text-primary mb-3"></i>
-                            <h1 class="display-6">Start Your Learning Journey</h1>
-                            <p class="text-muted">Create a free student account and access world-class courses</p>
+                            <i class="fa fa-lock fa-3x text-primary mb-3"></i>
+                            <h1 class="display-6">Reset Your Password</h1>
+                            <p class="text-muted">Create a new secure password for your account.</p>
                         </div>
                         
                         <?php if ($error): ?>
@@ -127,69 +121,61 @@ $page_title = 'Join SkillMaster - ' . APP_NAME;
                             <div class="text-center mt-3">
                                 <a href="login.php" class="btn btn-primary">Login Now</a>
                             </div>
-                        <?php else: ?>
+                        <?php elseif ($validToken): ?>
                             <form method="POST" action="">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" value="<?php echo htmlspecialchars($formData['first_name'] ?? ''); ?>" required>
-                                            <label for="first_name">First Name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name" value="<?php echo htmlspecialchars($formData['last_name'] ?? ''); ?>" required>
-                                            <label for="last_name">Last Name</label>
-                                        </div>
-                                    </div>
+                                <?php echo Security::csrfField(); ?>
+                                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+                                
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" value="<?php echo htmlspecialchars($userEmail); ?>" disabled>
+                                    <label>Email Address</label>
+                                    <small class="text-muted">Password reset for this account</small>
                                 </div>
                                 
                                 <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>" required>
-                                    <label for="email">Email Address</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="New Password" required minlength="<?php echo PASSWORD_MIN_LENGTH; ?>">
+                                    <label for="password">New Password (min <?php echo PASSWORD_MIN_LENGTH; ?> characters)</label>
                                 </div>
                                 
-                                <div class="form-floating mb-3">
-                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Phone" value="<?php echo htmlspecialchars($formData['phone_number'] ?? ''); ?>">
-                                    <label for="phone_number">Phone Number (Optional)</label>
+                                <div class="form-floating mb-4">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+                                    <label for="confirm_password">Confirm Password</label>
                                 </div>
                                 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="form-floating">
-                                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                                            <label for="password">Password (min <?php echo PASSWORD_MIN_LENGTH; ?> characters)</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="form-floating">
-                                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
-                                            <label for="confirm_password">Confirm Password</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="alert alert-info mb-3">
+                                <div class="alert alert-info mb-4">
                                     <i class="fa fa-info-circle me-2"></i>
-                                    By registering, you agree to our Terms of Service and Privacy Policy. You'll receive a confirmation email after registration.
+                                    <strong>Password Requirements:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Minimum <?php echo PASSWORD_MIN_LENGTH; ?> characters</li>
+                                        <li>At least one uppercase letter</li>
+                                        <li>At least one lowercase letter</li>
+                                        <li>At least one number</li>
+                                    </ul>
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
-                                    <i class="fa fa-user-plus me-2"></i>Create Free Account
+                                    <i class="fa fa-save me-2"></i>Reset Password
                                 </button>
                                 
                                 <div class="text-center">
-                                    <p class="mb-0">Already have an account? <a href="login.php" class="text-primary">Login here</a></p>
-                                    <p class="mb-0 mt-2">Want to teach? <a href="apply-instructor.php" class="text-primary">Apply as Instructor</a></p>
+                                    <p class="mb-0"><a href="login.php" class="text-primary">Back to Login</a></p>
                                 </div>
                             </form>
+                        <?php elseif (empty($token)): ?>
+                            <div class="alert alert-warning text-center">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                <strong>No reset token provided.</strong>
+                                <p class="mb-0 mt-2">Please use the link from your email to reset your password.</p>
+                                <hr>
+                                <a href="forgot-password.php" class="btn btn-primary mt-2">Request New Reset Link</a>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Register Form End -->
+    <!-- Reset Password Form End -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -218,6 +204,7 @@ $page_title = 'Join SkillMaster - ' . APP_NAME;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js"></script>
     
+    <!-- Password validation script -->
     <script>
         document.querySelector('form')?.addEventListener('submit', function(e) {
             var password = document.getElementById('password')?.value;
@@ -229,6 +216,15 @@ $page_title = 'Join SkillMaster - ' . APP_NAME;
             } else if (password && password.length < <?php echo PASSWORD_MIN_LENGTH; ?>) {
                 e.preventDefault();
                 alert('Password must be at least <?php echo PASSWORD_MIN_LENGTH; ?> characters!');
+            } else if (password && !/[A-Z]/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one uppercase letter!');
+            } else if (password && !/[a-z]/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one lowercase letter!');
+            } else if (password && !/[0-9]/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one number!');
             }
         });
     </script>
