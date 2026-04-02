@@ -107,19 +107,22 @@ class Authenticator
      * Get redirect URL based on user role
      */
 
+       /**
+     * Get redirect URL based on user role
+     */
     public function getRoleRedirect($role)
-{
-    switch ($role) {
-        case 'admin':
-            return '/Learning_management_system/public/admin/';
-        case 'instructor':
-            return '/Learning_management_system/public/instructor/';
-        case 'student':
-            return '/Learning_management_system/public/student/';
-        default:
-            return '/Learning_management_system/public/';
+    {
+        switch ($role) {
+            case 'admin':
+                return ADMIN_URL . '/';
+            case 'instructor':
+                return INSTRUCTOR_URL . '/';
+            case 'student':
+                return STUDENT_URL . '/';
+            default:
+                return PUBLIC_URL . '/';
+        }
     }
-}
     /**
      * Register a new student
      */

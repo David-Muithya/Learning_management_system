@@ -20,7 +20,12 @@ define('APP_DEVELOPER', 'David Muithya');
 // =============================================
 define('BASE_URL', 'http://localhost/Learning_management_system');
 
-define('ADMIN_URL', BASE_URL . '/admin');
+define('PUBLIC_URL', BASE_URL . '/public');
+define('ADMIN_URL', PUBLIC_URL . '/admin');
+define('INSTRUCTOR_URL', PUBLIC_URL . '/instructor');
+define('STUDENT_URL', PUBLIC_URL . '/student');
+
+define('LOGIN_URL', PUBLIC_URL . '/login.php');
 
 // =============================================
 // UPLOAD DIRECTORIES
