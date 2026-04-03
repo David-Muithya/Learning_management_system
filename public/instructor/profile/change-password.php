@@ -5,6 +5,7 @@ use SkillMaster\Auth\RoleMiddleware;
 use SkillMaster\Models\User;
 use SkillMaster\Helpers\Security;
 use SkillMaster\Helpers\Validation;
+use SkillMaster\Services\ActivityLogger;
 
 RoleMiddleware::check('instructor');
 
@@ -28,25 +29,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify current password
         if (!password_verify($currentPassword, $user['password'])) {
             $error = 'Current password is incorrect.';
-        } elseif (strlen($newPassword) < PASSWORD_MIN_LENGTH) {
-            $error = 'New password must be at least ' . PASSWORD_MIN_LENGTH . ' characters.';
-        } elseif ($newPassword !== $confirmPassword) {
-            $error = 'New passwords do not match.';
         } elseif ($currentPassword === $newPassword) {
             $error = 'New password must be different from current password.';
+        } elseif ($newPassword !== $confirmPassword) {
+            $error = 'New passwords do not match.';
         } else {
-            // Update password
-            $hashedPassword = Security::hashPassword($newPassword);
-            $stmt = $userModel->getDB()->prepare("UPDATE users SET password = ?, must_change_password = 0, updated_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$hashedPassword, $userId]);
-            
-            if ($result) {
-                $success = 'Password changed successfully!';
-                // Log activity
-                $stmt = $userModel->getDB()->prepare("INSERT INTO activity_logs (user_id, action, created_at) VALUES (?, 'change_password', NOW())");
-                $stmt->execute([$userId]);
+            // Validate new password strength
+            $passwordValidation = Validation::password($newPassword);
+            if ($passwordValidation !== true) {
+                $error = $passwordValidation;
             } else {
-                $error = 'Failed to change password. Please try again.';
+                // Update password
+                $hashedPassword = Security::hashPassword($newPassword);
+                $stmt = $userModel->getDB()->prepare("UPDATE users SET password = ?, must_change_password = 0, updated_at = NOW() WHERE id = ?");
+                $result = $stmt->execute([$hashedPassword, $userId]);
+                
+                if ($result) {
+                    $success = 'Password changed successfully! You will be logged out and need to login with your new password.';
+                    // Log activity
+                    $logger = new ActivityLogger();
+                    $logger->log($userId, 'password_changed', 'user', $userId);
+                    
+                    // Redirect to logout after 3 seconds
+                    header('Refresh: 3; url=../../logout.php');
+                } else {
+                    $error = 'Failed to change password. Please try again.';
+                }
             }
         }
     }
@@ -130,9 +138,10 @@ $page_title = 'Change Password - ' . APP_NAME;
                         <?php if ($success): ?>
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <i class="fa fa-check-circle me-2"></i><?php echo $success; ?>
+                                <p class="mb-0 mt-2 small">Redirecting you to login...</p>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                        <?php endif; ?>
+                        <?php else: ?>
                         
                         <form method="POST" action="">
                             <?php echo Security::csrfField(); ?>
@@ -142,10 +151,12 @@ $page_title = 'Change Password - ' . APP_NAME;
                                 <input type="password" class="form-control" name="current_password" required>
                             </div>
                             
+                            <hr class="my-4">
+                            <h6 class="text-muted mb-3">New Password</h6>
+                            
                             <div class="mb-3">
                                 <label class="form-label fw-bold">New Password</label>
                                 <input type="password" class="form-control" name="new_password" required>
-                                <small class="text-muted">Minimum <?php echo PASSWORD_MIN_LENGTH; ?> characters. Include uppercase, lowercase, and numbers.</small>
                             </div>
                             
                             <div class="mb-3">
@@ -155,6 +166,17 @@ $page_title = 'Change Password - ' . APP_NAME;
                             
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
+                                <strong>Password Requirements:</strong>
+                                <ul class="mb-0 mt-2 ps-3">
+                                    <li>Minimum <?php echo PASSWORD_MIN_LENGTH; ?> characters</li>
+                                    <li>At least one uppercase letter (A-Z)</li>
+                                    <li>At least one lowercase letter (a-z)</li>
+                                    <li>At least one number (0-9)</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
                                 For security, you will be logged out after changing your password and will need to log in again.
                             </div>
                             
@@ -163,6 +185,7 @@ $page_title = 'Change Password - ' . APP_NAME;
                                 <button type="submit" class="btn btn-primary">Change Password</button>
                             </div>
                         </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

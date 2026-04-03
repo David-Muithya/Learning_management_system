@@ -18,7 +18,7 @@ define('APP_DEVELOPER', 'David Muithya');
 // =============================================
 // URL & PATH CONFIGURATION
 // =============================================
-define('BASE_URL', 'http://localhost/Learning_management_system');
+define('BASE_URL', 'http://localhost:8080/Learning_management_system');
 
 define('PUBLIC_URL', BASE_URL . '/public');
 define('ADMIN_URL', PUBLIC_URL . '/admin');
@@ -64,7 +64,7 @@ define('DATETIME_FORMAT', 'F j, Y g:i A');
 // DATABASE CONFIGURATION
 // =============================================
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'lms_db');
+define('DB_NAME', 'lms');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
