@@ -11,24 +11,39 @@ if (isset($_SESSION['user_id']) && ($_GET['role'] ?? 'user') === ($_SESSION['use
 }
 
 $error = '';
+$success = '';
+
+// Check for success message from redirect (removed - no longer used)
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    
+
     if (empty($email) || empty($password)) {
         $error = 'Please enter both email and password';
     } else {
         $auth = new Authenticator();
         $result = $auth->login($email, $password);
-        
+
         if ($result['success']) {
             if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
                 // Prevent admin login through public portal
                 $auth->logout();
                 $error = 'Admin accounts must sign in through the private admin portal: /admin/login.php';
             } else {
-                header('Location: ' . $result['redirect']);
+                // Determine redirect based on user role
+                $role_param = $_POST['role'] ?? $_GET['role'] ?? $_SESSION['user_role'];
+                if ($role_param === 'student' || ($_SESSION['user_role'] ?? '') === 'student') {
+                    $redirect_url = STUDENT_URL . '/index.php';
+                } elseif ($role_param === 'instructor' || ($_SESSION['user_role'] ?? '') === 'instructor') {
+                    $redirect_url = INSTRUCTOR_URL . '/index.php';
+                } else {
+                    $redirect_url = STUDENT_URL . '/index.php'; // Default fallback
+                }
+
+                // Redirect immediately
+                header('Location: ' . $redirect_url);
                 exit;
             }
         } else {
@@ -87,9 +102,15 @@ $page_title = 'Login - ' . APP_NAME;
                 <a href="contact.php" class="nav-item nav-link">Contact</a>
                 <a href="login.php" class="nav-item nav-link active">Login</a>
             </div>
-            <a href="register.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                Join Now<i class="fa fa-arrow-right ms-3"></i>
-            </a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="<?php echo $_SESSION['user_role'] === 'instructor' ? '/instructor/' : '/student/'; ?>" class="btn btn-primary py-4 px-lg-5">
+                    Go to Dashboard<i class="fa fa-arrow-right ms-3"></i>
+                </a>
+            <?php else: ?>
+                <a href="register.php" class="btn btn-primary py-4 px-lg-5">
+                    Join Now<i class="fa fa-arrow-right ms-3"></i>
+                </a>
+            <?php endif; ?>
         </div>
     </nav>
     <!-- Navbar End -->
@@ -113,7 +134,10 @@ $page_title = 'Login - ' . APP_NAME;
                             </div>
                         <?php endif; ?>
                         
-                        <form method="POST" action="">
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+                            <?php if (isset($_GET['role']) && in_array($_GET['role'], ['student', 'instructor'], true)): ?>
+                                <input type="hidden" name="role" value="<?php echo htmlspecialchars($_GET['role']); ?>">
+                            <?php endif; ?>
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
                                 <label for="email">Email address</label>
@@ -132,7 +156,8 @@ $page_title = 'Login - ' . APP_NAME;
                                 <a href="forgot-password.php" class="text-primary">Forgot Password?</a>
                             </div>
                             
-                            <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                            <button type="submit" class="btn btn-primary w-100 py-3 mb-3" id="loginBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" id="loginSpinner"></span>
                                 <i class="fa fa-sign-in-alt me-2"></i>Login
                             </button>
                             
@@ -174,5 +199,15 @@ $page_title = 'Login - ' . APP_NAME;
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js"></script>
+    
+    <script>
+        // Show spinner on form submit
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginSpinner').classList.remove('d-none');
+            document.querySelector('form').querySelector('button[type="submit"]').innerHTML = 
+                '<span class="spinner-border spinner-border-sm" role="status"></span> Logging in...';
+        });
+    </script>
 </body>
 </html>

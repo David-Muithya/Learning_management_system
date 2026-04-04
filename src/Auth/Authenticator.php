@@ -20,6 +20,9 @@ class Authenticator
      */
     public function login($email, $password, $remember = false)
     {
+        // Clear any existing session data to prevent conflicts
+        $this->clearSession();
+        
         $user = $this->userModel->findByEmail($email);
         
         if (!$user) {
@@ -50,7 +53,10 @@ class Authenticator
         $_SESSION['user_role'] = $user['role'];
         $_SESSION['user_avatar'] = $user['profile_pic'];
         $_SESSION['login_time'] = time();
-        
+
+        // Debug logging
+        error_log("Login successful for user: {$user['email']} (Role: {$user['role']})");
+
         // Update last login
         $this->userModel->updateLastLogin($user['id']);
         
@@ -60,30 +66,23 @@ class Authenticator
         // Determine redirect based on role
         $redirect = $this->getRoleRedirect($user['role']);
         
+        error_log("Login redirect to: $redirect");
+        
         return ['success' => true, 'redirect' => $redirect, 'user' => $user];
     }
     
     /**
-     * Log out current user
+     * Clear current session data
      */
-    public function logout()
+    private function clearSession()
     {
-        if (isset($_SESSION['user_id'])) {
-            $this->logger->log($_SESSION['user_id'], 'logout', 'user', $_SESSION['user_id']);
+        // Clear all session variables except those we want to preserve
+        $preserve = [];
+        foreach ($_SESSION as $key => $value) {
+            if (!in_array($key, $preserve)) {
+                unset($_SESSION[$key]);
+            }
         }
-        
-        $_SESSION = [];
-        
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-        
-        session_destroy();
-        return true;
     }
     
     /**
@@ -104,6 +103,28 @@ class Authenticator
         }
         
         return $this->userModel->findById($_SESSION['user_id']);
+    }
+
+    /**
+     * Log the current user out and destroy the session.
+     */
+    public function logout()
+    {
+        if ($this->isLoggedIn()) {
+            $this->logger->log($_SESSION['user_id'], 'logout', 'user', $_SESSION['user_id']);
+        }
+
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params['path'], $params['domain'],
+                $params['secure'], $params['httponly']
+            );
+        }
+
+        session_destroy();
     }
     
     /**

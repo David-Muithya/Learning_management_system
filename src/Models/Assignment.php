@@ -99,7 +99,9 @@ class Assignment
         
         $stmt = $this->db->prepare("
             SELECT a.*, c.title as course_title, c.code as course_code,
-                   (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count
+                   (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count,
+                   (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id AND status = 'graded') as graded_count,
+                   (SELECT COUNT(*) FROM enrollments WHERE course_id = a.course_id AND status = 'active') as total_students
             FROM {$this->table} a
             LEFT JOIN courses c ON a.course_id = c.id
             WHERE a.instructor_id = ? AND a.deleted_at IS NULL

@@ -135,7 +135,10 @@ $page_title = 'My Assignments - ' . APP_NAME;
                             <?php foreach ($filteredAssignments as $assignment): ?>
                                 <?php
                                 $isPast = strtotime($assignment['due_date']) < time();
-                                $submissionRate = $assignment['submission_count'] > 0 ? round(($assignment['submission_count'] / max(1, $assignment['total_students'])) * 100) : 0;
+                                $totalStudents = $assignment['total_students'] ?? 0;
+                                $submissionCount = $assignment['submission_count'] ?? 0;
+                                $gradedCount = $assignment['graded_count'] ?? 0;
+                                $submissionRate = $totalStudents > 0 ? round(($submissionCount / $totalStudents) * 100) : 0;
                                 ?>
                                 <tr>
                                     <td>
@@ -150,17 +153,17 @@ $page_title = 'My Assignments - ' . APP_NAME;
                                     </td>
                                     <td><?php echo $assignment['max_points']; ?></td>
                                     <td>
-                                        <?php echo $assignment['submission_count']; ?> / <?php echo $assignment['total_students']; ?>
+                                        <?php echo $submissionCount; ?> / <?php echo $totalStudents; ?>
                                         <div class="progress mt-1" style="height: 5px;">
                                             <div class="progress-bar bg-success" style="width: <?php echo $submissionRate; ?>%"></div>
                                         </div>
                                     </td>
                                     <td>
-                                        <?php if ($assignment['graded_count'] > 0): ?>
-                                            <span class="badge bg-info"><?php echo $assignment['graded_count']; ?> Graded</span>
+                                        <?php if ($gradedCount > 0): ?>
+                                            <span class="badge bg-info"><?php echo $gradedCount; ?> Graded</span>
                                         <?php endif; ?>
-                                        <?php if ($assignment['submission_count'] - $assignment['graded_count'] > 0): ?>
-                                            <span class="badge bg-warning"><?php echo $assignment['submission_count'] - $assignment['graded_count']; ?> Pending</span>
+                                        <?php if ($submissionCount - $gradedCount > 0): ?>
+                                            <span class="badge bg-warning"><?php echo $submissionCount - $gradedCount; ?> Pending</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

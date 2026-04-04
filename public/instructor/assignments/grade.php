@@ -16,7 +16,12 @@ $gradeModel = new Grade();
 $notificationService = new NotificationService();
 
 $assignmentId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$submissionId = isset($_GET['submission_id']) ? (int)$_GET['submission_id'] : 0;
+$submissionId = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $submissionId = isset($_POST['submission_id']) ? (int)$_POST['submission_id'] : 0;
+} else {
+    $submissionId = isset($_GET['submission_id']) ? (int)$_GET['submission_id'] : 0;
+}
 
 // Get assignment details
 $assignment = $assignmentModel->getAssignmentWithStats($assignmentId, $_SESSION['user_id']);
@@ -50,9 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $submissionId) {
     }
 }
 
+// Get current page for pagination
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+
 // Get submissions for this assignment
 $submissionsData = $submissionModel->getForGrading($assignmentId, $_SESSION['user_id'], $page, 20);
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 $page_title = 'Grade Submissions - ' . $assignment['title'];
 ?>

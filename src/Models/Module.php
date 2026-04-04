@@ -30,7 +30,12 @@ class Module
             INSERT INTO {$this->table} (course_id, title, description, order_index, created_at)
             VALUES (?, ?, ?, ?, NOW())
         ");
-        return $stmt->execute([$courseId, $title, $description, $orderIndex]);
+        $result = $stmt->execute([$courseId, $title, $description, $orderIndex]);
+        
+        if ($result) {
+            return $this->db->lastInsertId();
+        }
+        return false;
     }
     
     /**

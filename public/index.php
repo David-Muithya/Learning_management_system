@@ -88,25 +88,19 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
             </div>
             <a href="contact.php" class="nav-item nav-link">Contact</a>
         </div>
-        <!-- Join Now button - Always visible, links to login page -->
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="<?php echo $_SESSION['user_role'] === 'admin' ? '/admin/' : ($_SESSION['user_role'] === 'instructor' ? '/instructor/' : '/student/'); ?>" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                <i class="fa fa-user me-2"></i>Dashboard
-            </a>
-        <?php else: ?>
-            <div class="dropdown d-none d-lg-block">
-                <button class="btn btn-primary py-4 px-lg-5 dropdown-toggle" type="button" id="joinDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Join Now<i class="fa fa-arrow-right ms-3"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="joinDropdown">
-                    <li><a class="dropdown-item" href="login.php?role=student">Login as Student</a></li>
-                    <li><a class="dropdown-item" href="login.php?role=instructor">Login as Instructor</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="register.php">Register as Student</a></li>
-                    <li><a class="dropdown-item" href="apply-instructor.php">Apply as Instructor</a></li>
-                </ul>
-            </div>
-        <?php endif; ?>
+        <!-- Join Now button - Always visible with login options embedded -->
+        <div class="dropdown d-none d-lg-block">
+            <button class="btn btn-primary py-4 px-lg-5 dropdown-toggle" type="button" id="joinDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Join Now<i class="fa fa-arrow-right ms-3"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="joinDropdown">
+                <li><a class="dropdown-item" href="login.php?role=student">Login as Student</a></li>
+                <li><a class="dropdown-item" href="login.php?role=instructor">Login as Instructor</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="register.php">Register as Student</a></li>
+                <li><a class="dropdown-item" href="apply-instructor.php">Apply as Instructor</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 <!-- Navbar End -->

@@ -116,20 +116,17 @@ if (session_status() === PHP_SESSION_NONE) {
         'samesite' => 'Lax'
     ]);
     
-    // Set session name based on path
-    if (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin/') !== false) {
-        session_name('admin_session');
-    } elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/instructor/') !== false) {
-        session_name('session_instructor');
-    } elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/student/') !== false) {
-        session_name('session_student');
-    } else {
-        $role = $_GET['role'] ?? 'user';
-        session_name('session_' . $role);
+    // Set session name based on route: separate admin sessions from public sessions
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $sessionName = 'skillmaster_public_session';
+
+    if (strpos($requestUri, '/admin/') !== false) {
+        $sessionName = 'skillmaster_admin_session';
     }
-    
+
+    session_name($sessionName);
     session_start();
-    
+
     if (!isset($_SESSION['created'])) {
         $_SESSION['created'] = time();
     } elseif (time() - $_SESSION['created'] > 1800) {

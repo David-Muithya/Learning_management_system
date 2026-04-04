@@ -171,7 +171,7 @@ class Course
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
         
-        return $stmt->execute([
+        $result = $stmt->execute([
             $data['title'],
             $slug,
             $code,
@@ -189,6 +189,11 @@ class Course
             $data['syllabus'] ?? null,
             $instructorId
         ]);
+        
+        if ($result) {
+            return $this->db->lastInsertId();
+        }
+        return false;
     }
     
     /**

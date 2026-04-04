@@ -48,10 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if (empty($error)) {
-                $result = $courseModel->createCourse($data, $_SESSION['user_id']);
+                $courseId = $courseModel->createCourse($data, $_SESSION['user_id']);
                 
-                if ($result) {
-                    $courseId = $courseModel->db->lastInsertId();
+                if ($courseId) {
                     $success = 'Course created successfully! You can now add content to your course.';
                     // Redirect to manage page after 2 seconds
                     header("refresh:2;url=manage.php?id=$courseId");
