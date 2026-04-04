@@ -26,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $lastName = Validation::sanitize($_POST['last_name'] ?? '');
         $phoneNumber = Validation::sanitize($_POST['phone_number'] ?? '');
         $address = Validation::sanitize($_POST['address'] ?? '');
+        $bio = Validation::sanitize($_POST['bio'] ?? '');
+        $facebookLink = Validation::sanitize($_POST['facebook_link'] ?? '');
+        $twitterLink = Validation::sanitize($_POST['twitter_link'] ?? '');
+        $linkedinLink = Validation::sanitize($_POST['linkedin_link'] ?? '');
         
         if (empty($firstName) || empty($lastName)) {
             $error = 'First name and last name are required.';
@@ -46,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $userModel->db->prepare("
                 UPDATE users SET 
                     first_name = ?, last_name = ?, phone_number = ?, 
-                    address = ?, updated_at = NOW()
+                    address = ?, bio = ?, facebook_link = ?, 
+                    twitter_link = ?, linkedin_link = ?, updated_at = NOW()
                 WHERE id = ?
             ");
-            $result = $stmt->execute([$firstName, $lastName, $phoneNumber, $address, $userId]);
+            $result = $stmt->execute([$firstName, $lastName, $phoneNumber, $address, $bio, $facebookLink, $twitterLink, $linkedinLink, $userId]);
             
             if ($result) {
                 $success = 'Profile updated successfully!';
@@ -144,6 +149,27 @@ $page_title = 'Edit Profile - ' . APP_NAME;
                             <div class="mb-3">
                                 <label class="form-label">Address</label>
                                 <textarea class="form-control" name="address" rows="2"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Bio</label>
+                                <textarea class="form-control" name="bio" rows="4" placeholder="Tell us about yourself..."><?php echo htmlspecialchars($user['bio'] ?? ''); ?></textarea>
+                                <small class="text-muted">Brief description about yourself (optional)</small>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Facebook Profile</label>
+                                    <input type="url" class="form-control" name="facebook_link" value="<?php echo htmlspecialchars($user['facebook_link'] ?? ''); ?>" placeholder="https://facebook.com/yourprofile">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Twitter Profile</label>
+                                    <input type="url" class="form-control" name="twitter_link" value="<?php echo htmlspecialchars($user['twitter_link'] ?? ''); ?>" placeholder="https://twitter.com/yourprofile">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">LinkedIn Profile</label>
+                                    <input type="url" class="form-control" name="linkedin_link" value="<?php echo htmlspecialchars($user['linkedin_link'] ?? ''); ?>" placeholder="https://linkedin.com/in/yourprofile">
+                                </div>
                             </div>
                             
                             <div class="mb-3">

@@ -110,6 +110,12 @@ $page_title = 'My Profile - ' . APP_NAME;
                             </div>
                             <div class="col-md-6">
                                 <div class="bg-white rounded p-3">
+                                    <small class="text-muted">Address</small>
+                                    <p class="mb-0 fw-bold"><?php echo htmlspecialchars($user['address'] ?? 'Not provided'); ?></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-white rounded p-3">
                                     <small class="text-muted">Member Since</small>
                                     <p class="mb-0 fw-bold"><?php echo date('F j, Y', strtotime($user['created_at'])); ?></p>
                                 </div>
@@ -118,6 +124,30 @@ $page_title = 'My Profile - ' . APP_NAME;
                                 <div class="bg-white rounded p-3">
                                     <small class="text-muted">Last Login</small>
                                     <p class="mb-0 fw-bold"><?php echo $user['last_login'] ? date('F j, Y', strtotime($user['last_login'])) : 'Never'; ?></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-white rounded p-3">
+                                    <small class="text-muted">Facebook</small>
+                                    <p class="mb-0 fw-bold"><?php echo $user['facebook_link'] ? '<a href="' . htmlspecialchars($user['facebook_link']) . '" target="_blank">View Profile</a>' : 'Not provided'; ?></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-white rounded p-3">
+                                    <small class="text-muted">Twitter</small>
+                                    <p class="mb-0 fw-bold"><?php echo $user['twitter_link'] ? '<a href="' . htmlspecialchars($user['twitter_link']) . '" target="_blank">View Profile</a>' : 'Not provided'; ?></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-white rounded p-3">
+                                    <small class="text-muted">LinkedIn</small>
+                                    <p class="mb-0 fw-bold"><?php echo $user['linkedin_link'] ? '<a href="' . htmlspecialchars($user['linkedin_link']) . '" target="_blank">View Profile</a>' : 'Not provided'; ?></p>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="bg-white rounded p-3">
+                                    <small class="text-muted">Bio</small>
+                                    <p class="mb-0 fw-bold"><?php echo nl2br(htmlspecialchars($user['bio'] ?? 'Not provided')); ?></p>
                                 </div>
                             </div>
                         </div>

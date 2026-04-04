@@ -1,4 +1,4 @@
-\# 🎓 SkillMaster Learning Management System (LMS)
+# 🎓 SkillMaster Learning Management System (LMS)
 
 
 
@@ -16,7 +16,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\## 📋 Table of Contents
+## 📋 Table of Contents
 
 
 
@@ -52,11 +52,11 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\## ✨ Features
+## ✨ Features
 
 
 
-\### 🏫 \*\*Admin Portal\*\* (Hidden Portal)
+### 🏫 \*\*Admin Portal\*\* (Hidden Portal)
 
 \- System dashboard with analytics
 
@@ -74,7 +74,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\### 👨‍🏫 \*\*Instructor Portal\*\*
+### 👨‍🏫 \*\*Instructor Portal\*\*
 
 \- Course creation and management
 
@@ -92,7 +92,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\### 👩‍🎓 \*\*Student Portal\*\*
+### 👩‍🎓 \*\*Student Portal\*\*
 
 \- Course browsing and enrollment
 
@@ -112,7 +112,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\### 🔐 \*\*Security Features\*\*
+### 🔐 \*\*Security Features\*\*
 
 \- Role-based access control (RBAC)
 
@@ -128,7 +128,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\### 📧 \*\*Email Integration\*\*
+### 📧 \*\*Email Integration\*\*
 
 \- SMTP support (Gmail, Outlook, etc.)
 
@@ -142,7 +142,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\## 🛠 Technology Stack
+## 🛠 Technology Stack
 
 
 
@@ -170,11 +170,11 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\## 💻 System Requirements
+## 💻 System Requirements
 
 
 
-\### Minimum Requirements
+### Minimum Requirements
 
 \- \*\*Web Server:\*\* Apache 2.4+ (XAMPP/WAMP recommended)
 
@@ -186,7 +186,7 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 
 
-\### PHP Extensions Required
+### PHP Extensions Required
 
 \- PDO MySQL
 
@@ -198,15 +198,15 @@ A comprehensive, feature-rich Learning Management System built for educational i
 
 \- JSON
 
-\- Session
+- Session
 
 
 
-\## 📥 Installation Guide
+## 📥 Installation Guide
 
 
 
-\### Step 1: Clone the Repository
+### Step 1: Clone the Repository
 
 ```bash
 
@@ -214,3 +214,4 @@ git clone https://github.com/yourusername/SkillMaster-LMS.git
 
 cd SkillMaster-LMS
 
+##Step 2: Install Composer Dependencies

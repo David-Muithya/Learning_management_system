@@ -4,11 +4,11 @@
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Quick Links</h4>
-                <a class="btn btn-link" href="<?php echo BASE_URL; ?>/about.php">About Us</a>
-                <a class="btn btn-link" href="<?php echo BASE_URL; ?>/contact.php">Contact Us</a>
-                <a class="btn btn-link" href="<?php echo BASE_URL; ?>/privacy.php">Privacy Policy</a>
-                <a class="btn btn-link" href="<?php echo BASE_URL; ?>/terms.php">Terms & Condition</a>
-                <a class="btn btn-link" href="<?php echo BASE_URL; ?>/faq.php">FAQs & Help</a>
+                <a class="btn btn-link" href="<?php echo PUBLIC_URL; ?>/about.php">About Us</a>
+                <a class="btn btn-link" href="<?php echo PUBLIC_URL; ?>/contact.php">Contact Us</a>
+                <a class="btn btn-link" href="<?php echo PUBLIC_URL; ?>/privacy.php">Privacy Policy</a>
+                <a class="btn btn-link" href="<?php echo PUBLIC_URL; ?>/terms.php">Terms & Condition</a>
+                <a class="btn btn-link" href="<?php echo PUBLIC_URL; ?>/faq.php">FAQs & Help</a>
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Contact</h4>
@@ -26,13 +26,13 @@
                 <h4 class="text-white mb-3">Gallery</h4>
                 <div class="row g-2 pt-2">
                     <div class="col-4">
-                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo BASE_URL; ?>/assets/img/course-1.jpg" alt="">
+                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo PUBLIC_URL; ?>/assets/img/course-1.jpg" alt="">
                     </div>
                     <div class="col-4">
-                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo BASE_URL; ?>/assets/img/course-2.jpg" alt="">
+                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo PUBLIC_URL; ?>/assets/img/course-2.jpg" alt="">
                     </div>
                     <div class="col-4">
-                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo BASE_URL; ?>/assets/img/course-3.jpg" alt="">
+                        <img class="img-fluid bg-light p-1 rounded" src="<?php echo PUBLIC_URL; ?>/assets/img/course-3.jpg" alt="">
                     </div>
                 </div>
             </div>
@@ -54,9 +54,9 @@
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="footer-menu">
-                        <a href="<?php echo BASE_URL; ?>/index.php">Home</a>
-                        <a href="<?php echo BASE_URL; ?>/privacy.php">Cookies</a>
-                        <a href="<?php echo BASE_URL; ?>/faq.php">Help</a>
+                        <a href="<?php echo PUBLIC_URL; ?>/index.php">Home</a>
+                        <a href="<?php echo PUBLIC_URL; ?>/privacy.php">Cookies</a>
+                        <a href="<?php echo PUBLIC_URL; ?>/faq.php">Help</a>
                     </div>
                 </div>
             </div>

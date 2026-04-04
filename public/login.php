@@ -20,9 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $auth->login($email, $password);
         
         if ($result['success']) {
-            // Redirect based on role
-            header('Location: ' . $result['redirect']);
-            exit;
+            if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+                // Prevent admin login through public portal
+                $auth->logout();
+                $error = 'Admin accounts must sign in through the private admin portal: /admin/login.php';
+            } else {
+                header('Location: ' . $result['redirect']);
+                exit;
+            }
         } else {
             $error = $result['message'];
         }

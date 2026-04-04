@@ -22,15 +22,18 @@ class Authenticator
     {
         $user = $this->userModel->findByEmail($email);
         
-        // Check if user exists and is active
-        if (!$user || !$user['is_active']) {
-            return ['success' => false, 'message' => 'Invalid credentials or account inactive'];
+        if (!$user) {
+            return ['success' => false, 'message' => 'Invalid email or password'];
+        }
+        
+        if (!$user['is_active']) {
+            return ['success' => false, 'message' => 'Account inactive. Please contact the site administrator if you believe this is a mistake.'];
         }
         
         // Verify password
         if (!password_verify($password, $user['password'])) {
             $this->logger->log($user['id'], 'failed_login', 'user', $user['id']);
-            return ['success' => false, 'message' => 'Invalid credentials'];
+            return ['success' => false, 'message' => 'Invalid email or password'];
         }
         
         // Check if password needs to be changed
