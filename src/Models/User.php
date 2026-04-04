@@ -114,6 +114,47 @@ class User
     }
     
     /**
+     * Update user profile
+     */
+    public function updateProfile($userId, $data)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE {$this->table} SET 
+                first_name = ?, 
+                last_name = ?, 
+                phone_number = ?, 
+                address = ?, 
+                bio = ?, 
+                facebook_link = ?, 
+                twitter_link = ?, 
+                linkedin_link = ?,
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        
+        return $stmt->execute([
+            $data['first_name'] ?? null,
+            $data['last_name'] ?? null,
+            $data['phone_number'] ?? null,
+            $data['address'] ?? null,
+            $data['bio'] ?? null,
+            $data['facebook_link'] ?? null,
+            $data['twitter_link'] ?? null,
+            $data['linkedin_link'] ?? null,
+            $userId
+        ]);
+    }
+    
+    /**
+     * Update user profile picture
+     */
+    public function updateProfilePicture($userId, $filename)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET profile_pic = ?, updated_at = NOW() WHERE id = ?");
+        return $stmt->execute([$filename, $userId]);
+    }
+    
+    /**
      * Check if email already exists
      */
     public function emailExists($email)
@@ -131,6 +172,22 @@ class User
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE username = ?");
         $stmt->execute([$username]);
         return $stmt->fetchColumn() > 0;
+    }
+    
+    /**
+     * Get recent users for admin dashboard
+     */
+    public function getRecentUsers($limit = 5)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, username, email, first_name, last_name, role, created_at 
+            FROM {$this->table} 
+            WHERE deleted_at IS NULL
+            ORDER BY created_at DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
     }
     
     /**

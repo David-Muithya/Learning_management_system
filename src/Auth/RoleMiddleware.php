@@ -29,7 +29,11 @@ class RoleMiddleware
     public static function check($requiredRole)
     {
         if (!isset($_SESSION['user_role'])) {
-            header('Location: ' . self::resolveRedirectUrl('/login.php'));
+            if ($requiredRole === 'admin') {
+                header('Location: ' . ADMIN_URL . '/login.php');
+            } else {
+                header('Location: ' . self::resolveRedirectUrl('/login.php'));
+            }
             exit;
         }
         
@@ -37,13 +41,13 @@ class RoleMiddleware
             // Redirect to appropriate dashboard
             switch ($_SESSION['user_role']) {
                 case 'admin':
-                    header('Location: ' . self::resolveRedirectUrl('/admin/'));
+                    header('Location: ' . ADMIN_URL . '/index.php');
                     break;
                 case 'instructor':
-                    header('Location: ' . self::resolveRedirectUrl('/instructor/'));
+                    header('Location: ' . INSTRUCTOR_URL . '/index.php');
                     break;
                 case 'student':
-                    header('Location: ' . self::resolveRedirectUrl('/student/'));
+                    header('Location: ' . STUDENT_URL . '/index.php');
                     break;
                 default:
                     header('Location: ' . self::resolveRedirectUrl('/login.php'));

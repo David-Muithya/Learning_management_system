@@ -49,14 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageType = 'danger';
             }
         }
-        
-        // Refresh data
-        $paymentsData = $paymentModel->getPendingVerification($page, 10);
-    } else {
-        $paymentsData = $paymentModel->getPendingVerification($page, 10);
     }
+
+    $pendingData = $enrollmentModel->getPendingVerification($page, 10);
 } else {
-    $paymentsData = $paymentModel->getPendingVerification($page, 10);
+    $pendingData = $enrollmentModel->getPendingVerification($page, 10);
 }
 
 $page_title = 'Pending Enrollments - ' . APP_NAME;
@@ -98,6 +95,7 @@ $page_title = 'Pending Enrollments - ' . APP_NAME;
                 <a href="../index.php" class="nav-item nav-link">Dashboard</a>
                 <a href="../instructors/applications.php" class="nav-item nav-link">Applications</a>
                 <a href="../courses/pending.php" class="nav-item nav-link">Pending Courses</a>
+                <a href="../payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="pending.php" class="nav-item nav-link active">Enrollments</a>
                 <a href="../settings/index.php" class="nav-item nav-link">Settings</a>
                 <a href="../../logout.php" class="nav-item nav-link">Logout</a>
@@ -131,7 +129,7 @@ $page_title = 'Pending Enrollments - ' . APP_NAME;
                 </div>
             <?php endif; ?>
             
-            <?php if (empty($paymentsData['payments'])): ?>
+            <?php if (empty($pendingData['enrollments'])): ?>
                 <div class="text-center py-5">
                     <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
                     <h4>No Pending Enrollments</h4>
@@ -155,46 +153,46 @@ $page_title = 'Pending Enrollments - ' . APP_NAME;
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($paymentsData['payments'] as $payment): ?>
+                                    <?php foreach ($pendingData['enrollments'] as $enrollment): ?>
                                     <tr>
-                                        <td><code><?php echo htmlspecialchars($payment['transaction_id']); ?></code></td>
+                                        <td><code><?php echo htmlspecialchars($enrollment['transaction_id'] ?? 'N/A'); ?></code></td>
                                         <td>
-                                            <strong><?php echo htmlspecialchars($payment['student_name']); ?></strong><br>
-                                            <small class="text-muted"><?php echo htmlspecialchars($payment['student_email']); ?></small>
+                                            <strong><?php echo htmlspecialchars($enrollment['student_name']); ?></strong><br>
+                                            <small class="text-muted"><?php echo htmlspecialchars($enrollment['student_email']); ?></small>
                                         </td>
                                         <td>
-                                            <strong><?php echo htmlspecialchars($payment['course_title']); ?></strong>
+                                            <strong><?php echo htmlspecialchars($enrollment['course_title']); ?></strong>
                                         </td>
-                                        <td><?php echo CURRENCY_SYMBOL; ?> <?php echo number_format($payment['amount'], 2); ?></td>
-                                        <td><?php echo date('M d, Y H:i', strtotime($payment['payment_date'])); ?></td>
+                                        <td><?php echo CURRENCY_SYMBOL; ?> <?php echo number_format($enrollment['amount'] ?? 0, 2); ?></td>
+                                        <td><?php echo !empty($enrollment['payment_date']) ? date('M d, Y H:i', strtotime($enrollment['payment_date'])) : 'N/A'; ?></td>
                                         <td>
                                             <span class="badge bg-warning">Pending Verification</span>
                                         </td>
                                         <td>
-                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#verifyModal<?php echo $payment['id']; ?>">
+                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#verifyModal<?php echo $enrollment['id']; ?>">
                                                 <i class="fa fa-check"></i> Verify
                                             </button>
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?php echo $payment['id']; ?>">
+                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<?php echo $enrollment['id']; ?>">
                                                 <i class="fa fa-times"></i> Reject
                                             </button>
                                         </td>
                                     </tr>
                                     
                                     <!-- Verify Modal -->
-                                    <div class="modal fade" id="verifyModal<?php echo $payment['id']; ?>" tabindex="-1">
+                                    <div class="modal fade" id="verifyModal<?php echo $enrollment['id']; ?>" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <form method="POST">
                                                     <?php echo Security::csrfField(); ?>
                                                     <input type="hidden" name="action" value="verify">
-                                                    <input type="hidden" name="payment_id" value="<?php echo $payment['id']; ?>">
+                                                    <input type="hidden" name="payment_id" value="<?php echo $enrollment['payment_id'] ?? 0; ?>">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Verify Enrollment</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Verify enrollment for <strong><?php echo htmlspecialchars($payment['student_name']); ?></strong> in <strong><?php echo htmlspecialchars($payment['course_title']); ?></strong>?</p>
-                                                        <p class="text-muted">Transaction: <code><?php echo htmlspecialchars($payment['transaction_id']); ?></code></p>
+                                                        <p>Verify enrollment for <strong><?php echo htmlspecialchars($enrollment['student_name']); ?></strong> in <strong><?php echo htmlspecialchars($enrollment['course_title']); ?></strong>?</p>
+                                                        <p class="text-muted">Transaction: <code><?php echo htmlspecialchars($enrollment['transaction_id'] ?? 'N/A'); ?></code></p>
                                                         <div class="mb-3">
                                                             <label class="form-label">Notes (Optional)</label>
                                                             <textarea name="notes" class="form-control" rows="2" placeholder="Add any verification notes..."></textarea>
@@ -211,19 +209,19 @@ $page_title = 'Pending Enrollments - ' . APP_NAME;
                                     </div>
                                     
                                     <!-- Reject Modal -->
-                                    <div class="modal fade" id="rejectModal<?php echo $payment['id']; ?>" tabindex="-1">
+                                    <div class="modal fade" id="rejectModal<?php echo $enrollment['id']; ?>" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <form method="POST">
                                                     <?php echo Security::csrfField(); ?>
                                                     <input type="hidden" name="action" value="reject">
-                                                    <input type="hidden" name="payment_id" value="<?php echo $payment['id']; ?>">
+                                                    <input type="hidden" name="payment_id" value="<?php echo $enrollment['payment_id'] ?? 0; ?>">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Reject Enrollment</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Reject enrollment for <strong><?php echo htmlspecialchars($payment['student_name']); ?></strong> in <strong><?php echo htmlspecialchars($payment['course_title']); ?></strong>?</p>
+                                                        <p>Reject enrollment for <strong><?php echo htmlspecialchars($enrollment['student_name']); ?></strong> in <strong><?php echo htmlspecialchars($enrollment['course_title']); ?></strong>?</p>
                                                         <div class="mb-3">
                                                             <label class="form-label">Reason for Rejection</label>
                                                             <textarea name="notes" class="form-control" rows="3" required></textarea>
@@ -246,21 +244,21 @@ $page_title = 'Pending Enrollments - ' . APP_NAME;
                 </div>
                 
                 <!-- Pagination -->
-                <?php if ($paymentsData['total_pages'] > 1): ?>
+                <?php if ($pendingData['total_pages'] > 1): ?>
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center">
-                            <?php if ($paymentsData['current_page'] > 1): ?>
-                                <li class="page-item"><a class="page-link" href="?page=<?php echo $paymentsData['current_page'] - 1; ?>">Previous</a></li>
+                            <?php if ($pendingData['current_page'] > 1): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?php echo $pendingData['current_page'] - 1; ?>">Previous</a></li>
                             <?php endif; ?>
                             
-                            <?php for ($i = 1; $i <= $paymentsData['total_pages']; $i++): ?>
-                                <li class="page-item <?php echo $i == $paymentsData['current_page'] ? 'active' : ''; ?>">
+                            <?php for ($i = 1; $i <= $pendingData['total_pages']; $i++): ?>
+                                <li class="page-item <?php echo $i == $pendingData['current_page'] ? 'active' : ''; ?>">
                                     <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
                             
-                            <?php if ($paymentsData['current_page'] < $paymentsData['total_pages']): ?>
-                                <li class="page-item"><a class="page-link" href="?page=<?php echo $paymentsData['current_page'] + 1; ?>">Next</a></li>
+                            <?php if ($pendingData['current_page'] < $pendingData['total_pages']): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?php echo $pendingData['current_page'] + 1; ?>">Next</a></li>
                             <?php endif; ?>
                         </ul>
                     </nav>

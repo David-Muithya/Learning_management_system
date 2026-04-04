@@ -4,8 +4,11 @@ require_once __DIR__ . '/../config/config.php';
 use SkillMaster\Auth\Authenticator;
 use SkillMaster\Auth\RoleMiddleware;
 
-// Redirect if already logged in
-RoleMiddleware::requireGuest();
+// Redirect if already logged in as the same role
+if (isset($_SESSION['user_id']) && ($_GET['role'] ?? 'user') === ($_SESSION['user_role'] ?? 'user')) {
+    header('Location: ' . ($_SESSION['user_role'] === 'instructor' ? '/instructor/' : '/student/'));
+    exit;
+}
 
 $error = '';
 

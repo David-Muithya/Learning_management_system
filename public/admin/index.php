@@ -74,6 +74,7 @@ $page_title = 'Admin Dashboard - ' . APP_NAME;
                 <a href="index.php" class="nav-item nav-link active">Dashboard</a>
                 <a href="instructors/applications.php" class="nav-item nav-link">Applications</a>
                 <a href="courses/pending.php" class="nav-item nav-link">Pending Courses</a>
+                <a href="payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="enrollments/pending.php" class="nav-item nav-link">Enrollments</a>
                 <a href="settings/index.php" class="nav-item nav-link">Settings</a>
                 <a href="../logout.php" class="nav-item nav-link">Logout</a>
@@ -154,7 +155,7 @@ $page_title = 'Admin Dashboard - ' . APP_NAME;
                         <i class="fa fa-credit-card fa-3x text-primary mb-3"></i>
                         <h3 class="mb-0"><?php echo $pendingPayments; ?></h3>
                         <p class="mb-0">Pending Payments</p>
-                        <a href="enrollments/pending.php" class="btn btn-sm btn-primary mt-3">Verify</a>
+                        <a href="payments/pending.php" class="btn btn-sm btn-primary mt-3">Verify</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">

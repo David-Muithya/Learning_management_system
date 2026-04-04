@@ -16,7 +16,6 @@ class Session
                 ini_set('session.cookie_secure', 1);
             }
             
-            session_name('lms_session');
             session_start();
         }
     }

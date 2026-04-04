@@ -116,7 +116,18 @@ if (session_status() === PHP_SESSION_NONE) {
         'samesite' => 'Lax'
     ]);
     
-    session_name('lms_session');
+    // Set session name based on path
+    if (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin/') !== false) {
+        session_name('admin_session');
+    } elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/instructor/') !== false) {
+        session_name('session_instructor');
+    } elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/student/') !== false) {
+        session_name('session_student');
+    } else {
+        $role = $_GET['role'] ?? 'user';
+        session_name('session_' . $role);
+    }
+    
     session_start();
     
     if (!isset($_SESSION['created'])) {

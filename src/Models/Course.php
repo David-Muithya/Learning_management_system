@@ -365,6 +365,24 @@ class Course
     }
     
     /**
+     * Get course statistics
+     */
+    public function getStats()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published,
+                SUM(CASE WHEN status = 'pending_approval' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
+            FROM {$this->table}
+            WHERE deleted_at IS NULL
+        ");
+        return $stmt->fetch();
+    }
+    
+    /**
      * Get pending courses for admin review
      */
     public function getPendingCourses($page = 1, $perPage = 10)

@@ -283,6 +283,15 @@ class MockPayment
     }
     
     /**
+     * Get pending payments count
+     */
+    public function getPendingCount()
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) as count FROM {$this->table} WHERE status = 'completed'");
+        return $stmt->fetch()['count'];
+    }
+    
+    /**
      * Notify admin about new payment
      */
     private function notifyAdmin($studentId, $courseId)

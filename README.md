@@ -215,3 +215,5 @@ git clone https://github.com/yourusername/SkillMaster-LMS.git
 cd SkillMaster-LMS
 
 ##Step 2: Install Composer Dependencies
+```bash
+composer install

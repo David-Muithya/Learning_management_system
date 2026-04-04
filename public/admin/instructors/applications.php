@@ -84,6 +84,7 @@ $page_title = 'Instructor Applications - ' . APP_NAME;
                 <a href="../index.php" class="nav-item nav-link">Dashboard</a>
                 <a href="applications.php" class="nav-item nav-link active">Applications</a>
                 <a href="../courses/pending.php" class="nav-item nav-link">Pending Courses</a>
+                <a href="../payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="../enrollments/pending.php" class="nav-item nav-link">Enrollments</a>
                 <a href="../settings/index.php" class="nav-item nav-link">Settings</a>
                 <a href="../../logout.php" class="nav-item nav-link">Logout</a>

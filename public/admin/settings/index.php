@@ -74,6 +74,7 @@ $page_title = 'System Settings - ' . APP_NAME;
                 <a href="../index.php" class="nav-item nav-link">Dashboard</a>
                 <a href="../instructors/applications.php" class="nav-item nav-link">Applications</a>
                 <a href="../courses/pending.php" class="nav-item nav-link">Pending Courses</a>
+                <a href="../payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="../enrollments/pending.php" class="nav-item nav-link">Enrollments</a>
                 <a href="index.php" class="nav-item nav-link active">Settings</a>
                 <a href="../../logout.php" class="nav-item nav-link">Logout</a>

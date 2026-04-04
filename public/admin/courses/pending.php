@@ -107,8 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Refresh data
         $coursesData = $courseModel->getPendingCourses($page, 10);
-    } else {
-        $coursesData = $courseModel->getPendingCourses($page, 10);
     }
 } else {
     $coursesData = $courseModel->getPendingCourses($page, 10);
@@ -153,6 +151,7 @@ $page_title = 'Pending Courses - ' . APP_NAME;
                 <a href="../index.php" class="nav-item nav-link">Dashboard</a>
                 <a href="../instructors/applications.php" class="nav-item nav-link">Applications</a>
                 <a href="pending.php" class="nav-item nav-link active">Pending Courses</a>
+                <a href="../payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="../enrollments/pending.php" class="nav-item nav-link">Enrollments</a>
                 <a href="../settings/index.php" class="nav-item nav-link">Settings</a>
                 <a href="../../logout.php" class="nav-item nav-link">Logout</a>

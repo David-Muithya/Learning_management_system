@@ -76,9 +76,18 @@ $page_title = 'About Us - ' . APP_NAME;
                     <i class="fa fa-user me-2"></i>Dashboard
                 </a>
             <?php else: ?>
-                <a href="login.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                    Join Now<i class="fa fa-arrow-right ms-3"></i>
-                </a>
+                <div class="dropdown d-none d-lg-block">
+                    <button class="btn btn-primary py-4 px-lg-5 dropdown-toggle" type="button" id="joinDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Join Now<i class="fa fa-arrow-right ms-3"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="joinDropdown">
+                        <li><a class="dropdown-item" href="login.php?role=student">Login as Student</a></li>
+                        <li><a class="dropdown-item" href="login.php?role=instructor">Login as Instructor</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="register.php">Register as Student</a></li>
+                        <li><a class="dropdown-item" href="apply-instructor.php">Apply as Instructor</a></li>
+                    </ul>
+                </div>
             <?php endif; ?>
         </div>
     </nav>
@@ -201,14 +210,14 @@ $page_title = 'About Us - ' . APP_NAME;
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="bg-light rounded p-4">
-                        <i class="fa fa-chalkboard-user fa-3x text-primary mb-3"></i>
+                        <i class="fa fa-book fa-3x text-primary mb-3"></i>
                         <h1 class="display-4"><?php echo number_format($stats['total_courses'] ?? 0); ?></h1>
                         <p class="mb-0">Online Courses</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="bg-light rounded p-4">
-                        <i class="fa fa-chalkboard fa-3x text-primary mb-3"></i>
+                        <i class="fa fa-chalkboard-user fa-3x text-primary mb-3"></i>
                         <h1 class="display-4"><?php echo number_format($stats['total_instructors'] ?? 0); ?></h1>
                         <p class="mb-0">Expert Instructors</p>
                     </div>

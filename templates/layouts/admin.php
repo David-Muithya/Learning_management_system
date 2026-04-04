@@ -25,6 +25,20 @@
             min-height: calc(100vh - 70px);
             background-color: #181d38;
         }
+        .nav-badge-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-badge-link .badge {
+            position: absolute;
+            top: 6px;
+            right: -8px;
+            font-size: 0.6rem;
+            min-width: 1.4rem;
+            line-height: 1.2;
+            padding: 0.35rem 0.45rem;
+        }
         .sidebar .nav-link {
             color: #fff;
             padding: 12px 20px;
@@ -48,6 +62,15 @@
 </head>
 <body>
 
+<?php
+use SkillMaster\Models\MockPayment;
+
+$pendingPaymentsCount = 0;
+if (class_exists(MockPayment::class)) {
+    $pendingPaymentsCount = (new MockPayment())->getPendingCount();
+}
+?>
+
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
         <a href="<?php echo BASE_URL; ?>/admin/index.php" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
@@ -59,6 +82,12 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="<?php echo BASE_URL; ?>/admin/index.php" class="nav-item nav-link">Dashboard</a>
+                <a href="<?php echo BASE_URL; ?>/admin/enrollments/pending.php" class="nav-item nav-link nav-badge-link">
+                    <i class="fa fa-credit-card me-1"></i> Pending Payments
+                    <?php if ($pendingPaymentsCount > 0): ?>
+                        <span class="badge bg-danger rounded-pill"><?php echo $pendingPaymentsCount; ?></span>
+                    <?php endif; ?>
+                </a>
                 <a href="<?php echo BASE_URL; ?>/admin/settings/index.php" class="nav-item nav-link">Settings</a>
                 <a href="<?php echo BASE_URL; ?>/logout.php" class="nav-item nav-link">Logout</a>
             </div>
