@@ -9,7 +9,7 @@ $testimonials = [
     [
         'name' => 'Alice Wanjiku',
         'profession' => 'Web Developer',
-        'image' => 'testimonial-1.jpg',
+        'image' => 'testimonial-1.png',
         'message' => 'SkillMaster transformed my career! The web development course was comprehensive and the instructors were incredibly supportive. I landed my dream job within 3 months of completing the course.',
         'rating' => 5
     ],
@@ -37,7 +37,7 @@ $testimonials = [
     [
         'name' => 'Esther Nyokabi',
         'profession' => 'UI/UX Designer',
-        'image' => 'testimonial-1.jpg',
+        'image' => 'nyokabi.jpg',
         'message' => 'The design courses at SkillMaster are outstanding. I learned modern design principles and tools that helped me advance my career.',
         'rating' => 5
     ],

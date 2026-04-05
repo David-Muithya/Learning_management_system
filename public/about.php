@@ -217,7 +217,7 @@ $page_title = 'About Us - ' . APP_NAME;
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="bg-light rounded p-4">
-                        <i class="fa fa-chalkboard-user fa-3x text-primary mb-3"></i>
+                        <i class="fa fa-graduation-cap fa-3x text-primary mb-3"></i>
                         <h1 class="display-4"><?php echo number_format($stats['total_instructors'] ?? 0); ?></h1>
                         <p class="mb-0">Expert Instructors</p>
                     </div>

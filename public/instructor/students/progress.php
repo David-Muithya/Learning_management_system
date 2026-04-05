@@ -27,8 +27,9 @@ if (!$course || $course['instructor_id'] != $instructorId) {
     exit;
 }
 
-// Get student info
-$stmt = $enrollmentModel->db->prepare("SELECT first_name, last_name, email FROM users WHERE id = ?");
+// Get student info - FIXED: Use getDB() method instead of direct property access
+$db = $enrollmentModel->getDB();
+$stmt = $db->prepare("SELECT first_name, last_name, email, profile_pic FROM users WHERE id = ?");
 $stmt->execute([$studentId]);
 $student = $stmt->fetch();
 
@@ -47,16 +48,14 @@ $totalPossible = 0;
 $completedAssignments = 0;
 
 foreach ($assignments as $assignment) {
-    $submission = $submissionModel->getForGradingById($assignment['id'], $instructorId);
-    // Custom query for student's submission
-    $stmt = $submissionModel->db->prepare("
+    // Get submission for this student
+    $stmt = $submissionModel->getDB()->prepare("
         SELECT s.*, g.grade_value, g.letter_grade
         FROM submissions s
-        LEFT JOIN grades g ON g.assignment_id = s.assignment_id AND g.enrollment_id = 
-            (SELECT id FROM enrollments WHERE student_id = ? AND course_id = ?)
+        LEFT JOIN grades g ON g.assignment_id = s.assignment_id 
         WHERE s.assignment_id = ? AND s.student_id = ?
     ");
-    $stmt->execute([$studentId, $courseId, $assignment['id'], $studentId]);
+    $stmt->execute([$assignment['id'], $studentId]);
     $submissionData = $stmt->fetch();
     
     $gradesData[] = [
@@ -98,8 +97,23 @@ $page_title = 'Student Progress - ' . APP_NAME;
     
     <!-- Template Stylesheet -->
     <link href="../../assets/css/style.css" rel="stylesheet">
+    
+    <style>
+        .progress-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .progress-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(6, 187, 204, 0.1);
+        }
+        .grade-A { background-color: #198754; color: white; }
+        .grade-B { background-color: #0dcaf0; color: #000; }
+        .grade-C { background-color: #ffc107; color: #000; }
+        .grade-D { background-color: #fd7e14; color: white; }
+        .grade-F { background-color: #dc3545; color: white; }
+    </style>
 </head>
-<body>
+<body style="background-color: #F0FBFC;">
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
@@ -123,14 +137,10 @@ $page_title = 'Student Progress - ' . APP_NAME;
     <!-- Navbar End -->
 
     <!-- Header Start -->
-    <div class="container-fluid bg-primary py-4 mb-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <h1 class="text-white">Student Progress</h1>
-                    <p class="text-white mb-0"><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?> - <?php echo htmlspecialchars($course['title']); ?></p>
-                </div>
-            </div>
+    <div class="container-fluid py-4 mb-5" style="background-color: #06BBCC;">
+        <div class="container text-center">
+            <h1 class="text-white">Student Progress</h1>
+            <p class="text-white mb-0"><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?> - <?php echo htmlspecialchars($course['title']); ?></p>
         </div>
     </div>
     <!-- Header End -->
@@ -142,47 +152,44 @@ $page_title = 'Student Progress - ' . APP_NAME;
             <!-- Student Info Cards -->
             <div class="row g-4 mb-5">
                 <div class="col-md-3">
-                    <div class="bg-light rounded p-3 text-center">
-                        <i class="fa fa-user-graduate fa-2x text-primary mb-2"></i>
-                        <h4 class="mb-0"><?php echo $completedAssignments; ?></h4>
-                        <small class="text-muted">Assignments Completed</small>
+                    <div class="bg-white rounded p-3 text-center shadow-sm progress-card">
+                        <i class="fa fa-check-circle fa-2x text-success mb-2"></i>
+                        <h3 class="mb-0"><?php echo $completedAssignments; ?></h3>
+                        <p class="text-muted mb-0">Assignments Completed</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="bg-light rounded p-3 text-center">
-                        <i class="fa fa-chart-line fa-2x text-primary mb-2"></i>
-                        <h4 class="mb-0"><?php echo round($overallPercentage, 1); ?>%</h4>
-                        <small class="text-muted">Overall Progress</small>
+                    <div class="bg-white rounded p-3 text-center shadow-sm progress-card">
+                        <i class="fa fa-chart-line fa-2x text-primary mb-2" style="color: #06BBCC !important;"></i>
+                        <h3 class="mb-0"><?php echo round($overallPercentage, 1); ?>%</h3>
+                        <p class="text-muted mb-0">Overall Progress</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="bg-light rounded p-3 text-center">
-                        <i class="fa fa-star fa-2x text-primary mb-2"></i>
-                        <h4 class="mb-0"><?php echo $totalEarned; ?>/<?php echo $totalPossible; ?></h4>
-                        <small class="text-muted">Total Points</small>
+                    <div class="bg-white rounded p-3 text-center shadow-sm progress-card">
+                        <i class="fa fa-star fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-0"><?php echo $totalEarned; ?>/<?php echo $totalPossible; ?></h3>
+                        <p class="text-muted mb-0">Total Points</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="bg-light rounded p-3 text-center">
-                        <i class="fa fa-graduation-cap fa-2x text-primary mb-2"></i>
-                        <h4 class="mb-0">
-                            <span class="badge bg-<?php 
-                                echo $letterGrade === 'A' ? 'success' : 
-                                     ($letterGrade === 'B' ? 'info' : 
-                                     ($letterGrade === 'C' ? 'warning' : 
-                                     ($letterGrade === 'D' ? 'secondary' : 'danger'))); 
-                            ?> fs-4"><?php echo $letterGrade; ?></span>
-                        </h4>
-                        <small class="text-muted">Current Grade</small>
+                    <div class="bg-white rounded p-3 text-center shadow-sm progress-card">
+                        <i class="fa fa-graduation-cap fa-2x text-primary mb-2" style="color: #06BBCC !important;"></i>
+                        <h3 class="mb-0">
+                            <span class="badge grade-<?php echo $letterGrade; ?> fs-5 px-3 py-2">
+                                <?php echo $letterGrade; ?>
+                            </span>
+                        </h3>
+                        <p class="text-muted mb-0">Current Grade</p>
                     </div>
                 </div>
             </div>
             
             <!-- Progress Bar -->
-            <div class="bg-light rounded p-4 mb-4">
-                <h5 class="mb-3">Course Progress</h5>
-                <div class="progress mb-2" style="height: 30px;">
-                    <div class="progress-bar bg-success" style="width: <?php echo $overallPercentage; ?>%;">
+            <div class="bg-white rounded p-4 shadow-sm mb-4">
+                <h5 class="mb-3" style="color: #06BBCC;">Course Progress</h5>
+                <div class="progress mb-2" style="height: 25px; border-radius: 30px;">
+                    <div class="progress-bar bg-success" style="width: <?php echo $overallPercentage; ?>%; border-radius: 30px;">
                         <?php echo round($overallPercentage, 1); ?>% Complete
                     </div>
                 </div>
@@ -190,11 +197,11 @@ $page_title = 'Student Progress - ' . APP_NAME;
             </div>
             
             <!-- Assignments Table -->
-            <div class="bg-light rounded p-4">
-                <h5 class="mb-3">Assignment Performance</h5>
+            <div class="bg-white rounded p-4 shadow-sm">
+                <h5 class="mb-3" style="color: #06BBCC;">Assignment Performance</h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="bg-primary text-white">
+                        <thead style="background-color: #06BBCC; color: white;">
                             <tr>
                                 <th>Assignment</th>
                                 <th>Due Date</th>
@@ -237,7 +244,7 @@ $page_title = 'Student Progress - ' . APP_NAME;
                                         <?php if ($isGraded): ?>
                                             <span class="badge bg-success">Graded</span>
                                         <?php elseif ($isSubmitted): ?>
-                                            <span class="badge bg-warning">Submitted</span>
+                                            <span class="badge bg-warning text-dark">Submitted</span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary">Not Started</span>
                                         <?php endif; ?>
@@ -252,16 +259,16 @@ $page_title = 'Student Progress - ' . APP_NAME;
                                             <div class="modal fade" id="feedbackModal<?php echo $assignment['id']; ?>" tabindex="-1">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Feedback - <?php echo htmlspecialchars($assignment['title']); ?></h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header" style="background-color: #06BBCC;">
+                                                            <h5 class="modal-title text-white">Feedback - <?php echo htmlspecialchars($assignment['title']); ?></h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <p><strong>Student:</strong> <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></p>
                                                             <p><strong>Grade:</strong> <?php echo $grade; ?> / <?php echo $assignment['max_points']; ?></p>
                                                             <hr>
                                                             <p><strong>Feedback:</strong></p>
-                                                            <div class="bg-white rounded p-3">
+                                                            <div class="bg-light p-3 rounded">
                                                                 <?php echo nl2br(htmlspecialchars($submission['feedback'])); ?>
                                                             </div>
                                                         </div>
@@ -283,7 +290,7 @@ $page_title = 'Student Progress - ' . APP_NAME;
                 <a href="enrolled.php?course_id=<?php echo $courseId; ?>" class="btn btn-secondary">
                     <i class="fa fa-arrow-left me-2"></i>Back to Students
                 </a>
-                <a href="mailto:<?php echo $student['email']; ?>" class="btn btn-primary">
+                <a href="mailto:<?php echo $student['email']; ?>" class="btn btn-primary" style="background-color: #06BBCC; border-color: #06BBCC;">
                     <i class="fa fa-envelope me-2"></i>Contact Student
                 </a>
             </div>
@@ -303,6 +310,11 @@ $page_title = 'Student Progress - ' . APP_NAME;
         </div>
     </div>
     <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="background-color: #06BBCC; border-color: #06BBCC;">
+        <i class="bi bi-arrow-up"></i>
+    </a>
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

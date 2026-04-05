@@ -17,6 +17,14 @@ class User
     /**
      * Find user by email
      */
+
+        /**
+     * Get database connection
+     */
+    public function getDB()
+    {
+        return $this->db;
+    }
     public function findByEmail($email)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE email = ? AND deleted_at IS NULL");

@@ -140,6 +140,38 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                     </div>
                 </div>
             </div>
+            <div class="owl-carousel-item position-relative">
+                <img class="img-fluid" src="assets/img/carousel-3.jpg" alt="">
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
+                    <div class="container">
+                        <div class="row justify-content-start">
+                            <div class="col-sm-10 col-lg-8">
+                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Interactive Learning</h5>
+                                <h1 class="display-3 text-white animated slideInDown">Engage with Interactive Content</h1>
+                                <p class="fs-5 text-white mb-4 pb-2">Experience hands-on learning with quizzes, assignments, and interactive modules designed to reinforce your understanding.</p>
+                                <a href="courses.php" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Browse Courses</a>
+                                <a href="register.php" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Start Learning</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="owl-carousel-item position-relative">
+                <img class="img-fluid" src="assets/img/carousel-4.jpg" alt="">
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
+                    <div class="container">
+                        <div class="row justify-content-start">
+                            <div class="col-sm-10 col-lg-8">
+                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Success Stories</h5>
+                                <h1 class="display-3 text-white animated slideInDown">Join Thousands of Successful Learners</h1>
+                                <p class="fs-5 text-white mb-4 pb-2">See how our platform has transformed careers. Read testimonials from students who achieved their goals through our courses.</p>
+                                <a href="testimonials.php" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Read Stories</a>
+                                <a href="register.php" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Community</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Carousel End -->
@@ -336,7 +368,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                 </div>
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="bg-light rounded p-4">
-                        <i class="fa fa-chalkboard-user fa-3x text-primary mb-3"></i>
+                        <i class="fa fa-graduation-cap fa-3x text-primary mb-3"></i>
                         <h1 class="display-4"><?php echo number_format($stats['total_instructors'] ?? 0); ?></h1>
                         <p class="mb-0">Expert Instructors</p>
                     </div>
@@ -410,7 +442,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
             </div>
             <div class="owl-carousel testimonial-carousel position-relative">
                 <div class="testimonial-item text-center">
-                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/testimonial-1.jpg" style="width: 80px; height: 80px;">
+                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/testimonial-1.png" style="width: 80px; height: 80px;">
                     <h5 class="mb-0">Alice Wanjiku</h5>
                     <p>Web Developer</p>
                     <div class="testimonial-text bg-light text-center p-4">
@@ -418,7 +450,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
-                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/testimonial-2.jpg" style="width: 80px; height: 80px;">
+                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/kamau.jpg" style="width: 80px; height: 80px;">
                     <h5 class="mb-0">Brian Kamau</h5>
                     <p>Data Analyst</p>
                     <div class="testimonial-text bg-light text-center p-4">
@@ -426,7 +458,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
-                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/testimonial-3.jpg" style="width: 80px; height: 80px;">
+                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/carol.jpg" style="width: 80px; height: 80px;">
                     <h5 class="mb-0">Carol Muthoni</h5>
                     <p>Full Stack Developer</p>
                     <div class="testimonial-text bg-light text-center p-4">
@@ -434,7 +466,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
-                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/testimonial-4.jpg" style="width: 80px; height: 80px;">
+                    <img class="border rounded-circle p-2 mx-auto mb-3" src="assets/img/omondi.png" style="width: 80px; height: 80px;">
                     <h5 class="mb-0">David Omondi</h5>
                     <p>Mobile App Developer</p>
                     <div class="testimonial-text bg-light text-center p-4">

@@ -21,8 +21,16 @@ class Submission
     
     /**
      * Submit assignment with file upload
+	
      */
-    public function submit($assignmentId, $studentId, $submissionText = null, $file = null)
+        /**
+     * Get database connection
+     */
+    public function getDB()
+    {
+        return $this->db;
+    }
+	public function submit($assignmentId, $studentId, $submissionText = null, $file = null)
     {
         // Check if already submitted
         if ($this->hasSubmitted($assignmentId, $studentId)) {

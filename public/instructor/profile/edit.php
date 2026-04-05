@@ -1,4 +1,3 @@
-
 <?php
 // Edit Instructor Profile
 require_once __DIR__ . '/../../../config/config.php';
@@ -46,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if (empty($firstName) || empty($lastName)) {
                 $error = 'First name and last name are required.';
             } else {
-                $stmt = $userModel->getDB()->prepare("
+                $db = $userModel->getDB();
+                $stmt = $db->prepare("
                     UPDATE users SET 
                         first_name = ?, last_name = ?, phone_number = ?, 
                         bio = ?, address = ?, facebook_link = ?, 
@@ -70,27 +70,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         } elseif ($action === 'update_avatar') {
             if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-                $uploadResult = $fileUpload->upload($_FILES['avatar'], '', 'instructor_' . $userId);
-                if ($uploadResult) {
-                    // Delete old avatar if exists
-                    if ($user['profile_pic']) {
-                        $oldPath = PROFILE_UPLOAD_PATH . $user['profile_pic'];
-                        if (file_exists($oldPath)) {
-                            unlink($oldPath);
-                        }
-                    }
-                    
-                    $stmt = $userModel->getDB()->prepare("UPDATE users SET profile_pic = ? WHERE id = ?");
-                    $result = $stmt->execute([$uploadResult['filename'], $userId]);
-                    
-                    if ($result) {
-                        $success = 'Profile picture updated successfully!';
-                        $user = $userModel->findById($userId);
-                    } else {
-                        $error = 'Failed to update profile picture.';
-                    }
+                // Validate file type
+                $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                $fileType = $_FILES['avatar']['type'];
+                
+                if (!in_array($fileType, $allowedTypes)) {
+                    $error = 'Only JPG, PNG, and GIF images are allowed.';
+                } elseif ($_FILES['avatar']['size'] > 2 * 1024 * 1024) {
+                    $error = 'Image size must be less than 2MB.';
                 } else {
-                    $error = 'Failed to upload image. ' . implode(', ', $fileUpload->getErrors());
+                    $uploadResult = $fileUpload->upload($_FILES['avatar'], '', 'instructor_' . $userId);
+                    if ($uploadResult) {
+                        // Delete old avatar if exists
+                        if ($user['profile_pic'] && file_exists(PROFILE_UPLOAD_PATH . $user['profile_pic'])) {
+                            unlink(PROFILE_UPLOAD_PATH . $user['profile_pic']);
+                        }
+                        
+                        $db = $userModel->getDB();
+                        $stmt = $db->prepare("UPDATE users SET profile_pic = ? WHERE id = ?");
+                        $result = $stmt->execute([$uploadResult['filename'], $userId]);
+                        
+                        if ($result) {
+                            $success = 'Profile picture updated successfully!';
+                            $user = $userModel->findById($userId);
+                        } else {
+                            $error = 'Failed to update profile picture.';
+                        }
+                    } else {
+                        $error = 'Failed to upload image. ' . implode(', ', $fileUpload->getErrors());
+                    }
                 }
             } else {
                 $error = 'Please select an image to upload.';
@@ -148,7 +156,7 @@ $page_title = 'Edit Profile - ' . APP_NAME;
     <!-- Navbar End -->
 
     <!-- Header Start -->
-    <div class="container-fluid bg-primary py-4 mb-5">
+    <div class="container-fluid bg-primary py-4 mb-5" style="background-color: #06BBCC !important;">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
@@ -252,7 +260,7 @@ $page_title = 'Edit Profile - ' . APP_NAME;
                                     </div>
                                     <div class="col-12">
                                         <hr>
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        <button type="submit" class="btn btn-primary" style="background-color: #06BBCC; border-color: #06BBCC;">Save Changes</button>
                                         <a href="index.php" class="btn btn-secondary">Cancel</a>
                                     </div>
                                 </div>
@@ -263,7 +271,7 @@ $page_title = 'Edit Profile - ' . APP_NAME;
                             <h5 class="mb-4">Update Profile Picture</h5>
                             <div class="text-center mb-4">
                                 <img src="<?php echo !empty($user['profile_pic']) ? '../../uploads/profiles/' . $user['profile_pic'] : '../../assets/img/user-avatar.png'; ?>" 
-                                     class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                     class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #06BBCC;">
                                 <h6>Current Profile Picture</h6>
                             </div>
                             
@@ -273,11 +281,11 @@ $page_title = 'Edit Profile - ' . APP_NAME;
                                 
                                 <div class="mb-3">
                                     <label class="form-label">Upload New Image</label>
-                                    <input type="file" class="form-control" name="avatar" accept="image/*" required>
+                                    <input type="file" class="form-control" name="avatar" accept="image/jpeg,image/jpg,image/png,image/gif" required>
                                     <small class="text-muted">Recommended size: 400x400 pixels. Max size: 2MB. Formats: JPG, PNG, GIF</small>
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary">Upload New Picture</button>
+                                <button type="submit" class="btn btn-primary" style="background-color: #06BBCC; border-color: #06BBCC;">Upload New Picture</button>
                                 <a href="index.php" class="btn btn-secondary">Cancel</a>
                             </form>
                         <?php endif; ?>

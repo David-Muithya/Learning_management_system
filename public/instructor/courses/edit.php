@@ -179,7 +179,7 @@ $page_title = 'Edit Course - ' . APP_NAME;
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Course Thumbnail</label>
+                                <label class="form-label fw-bold">carousel-1.pngil</label>
                                 <?php if ($course['thumbnail']): ?>
                                     <div class="mb-2">
                                         <img src="<?php echo '../../uploads/courses/' . $course['thumbnail']; ?>" alt="Current thumbnail" style="height: 100px;">
