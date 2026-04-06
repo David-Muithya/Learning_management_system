@@ -77,6 +77,9 @@ $page_title = 'Admin Dashboard - ' . APP_NAME;
     <i class="fa fa-user-circle me-2"></i> My Profile
 </a>
                 <a href="courses/pending.php" class="nav-item nav-link">Pending Courses</a>
+                <a class="nav-link" href="categories/index.php">
+    <i class="fa fa-tags me-2"></i> Course Categories
+</a>
                 <a href="payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="enrollments/pending.php" class="nav-item nav-link">Enrollments</a>
                 <a href="settings/index.php" class="nav-item nav-link">Settings</a>
