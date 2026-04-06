@@ -73,6 +73,9 @@ $page_title = 'Admin Dashboard - ' . APP_NAME;
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="index.php" class="nav-item nav-link active">Dashboard</a>
                 <a href="instructors/applications.php" class="nav-item nav-link">Applications</a>
+<a class="nav-link" href="profile/index.php">
+    <i class="fa fa-user-circle me-2"></i> My Profile
+</a>
                 <a href="courses/pending.php" class="nav-item nav-link">Pending Courses</a>
                 <a href="payments/pending.php" class="nav-item nav-link">Pending Payments</a>
                 <a href="enrollments/pending.php" class="nav-item nav-link">Enrollments</a>

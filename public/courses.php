@@ -117,7 +117,7 @@ $page_title = 'Courses - ' . APP_NAME;
                 <?php foreach ($categories as $index => $cat): ?>
                     <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.<?php echo ($index % 3 + 1) * 2; ?>s">
                         <a class="position-relative d-block overflow-hidden" href="?category=<?php echo $cat['slug']; ?>" style="border-radius: 10px;">
-                            <img class="img-fluid" src="assets/img/cat-<?php echo ($index % 4) + 1; ?>.jpg" alt="<?php echo htmlspecialchars($cat['name']); ?>" style="height: 200px; width: 100%; object-fit: cover;">
+                            <img class="img-fluid" src="assets/img/cat-<?php echo ($index % 5) + 1; ?>.png" alt="<?php echo htmlspecialchars($cat['name']); ?>" style="height: 200px; width: 100%; object-fit: cover;">
                             <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px; border-radius: 10px 0 0 0;">
                                 <h5 class="m-0"><?php echo htmlspecialchars($cat['name']); ?></h5>
                                 <small class="text-primary"><?php echo $cat['course_count']; ?> Courses</small>

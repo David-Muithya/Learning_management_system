@@ -213,7 +213,15 @@ A comprehensive, feature-rich Learning Management System built for educational i
 git clone https://github.com/yourusername/SkillMaster-LMS.git
 
 cd SkillMaster-LMS
+```
 
 ##Step 2: Install Composer Dependencies
 ```bash
 composer install
+```
+All the students passwords: ## Student@2026
+
+
+All the instructors password: ## Instructor@2026
+
+Admin password : ## Nairobi@2026!Skill
