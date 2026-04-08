@@ -158,7 +158,14 @@ class ContactMessage
         
         // Send to admin email
         if (defined('ADMIN_EMAIL') && !empty(ADMIN_EMAIL)) {
-            $this->emailService->send(ADMIN_EMAIL, $subject, $body);
+            $this->emailService->send(
+                ADMIN_EMAIL,
+                $subject,
+                $body,
+                null,
+                $data['email'],
+                $data['name'] ?? ''
+            );
         }
     }
     

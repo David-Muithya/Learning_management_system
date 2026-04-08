@@ -82,7 +82,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                 <div class="dropdown-menu fade-down m-0">
                     <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                    <a href="testimonials.php" class="dropdown-item">Testimonials</a>
+                    <a href="testimonials.php" class="dropdown-item">testimonials</a>
                     <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
                 </div>
             </div>
@@ -433,11 +433,11 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
     </div>
     <!-- Instructors End -->
 
-    <!-- Testimonial Start -->
+    <!-- testimonial Start -->
     <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
         <div class="container">
             <div class="text-center">
-                <h6 class="section-title bg-white text-center text-primary px-3">Testimonial</h6>
+                <h6 class="section-title bg-white text-center text-primary px-3">testimonial</h6>
                 <h1 class="mb-5">Our Students Say!</h1>
             </div>
             <div class="owl-carousel testimonial-carousel position-relative">
@@ -476,7 +476,7 @@ $page_title = APP_NAME . ' - Best Online Learning Platform';
             </div>
         </div>
     </div>
-    <!-- Testimonial End -->
+    <!-- testimonial End -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

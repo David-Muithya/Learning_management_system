@@ -1,5 +1,5 @@
 <?php
-// Student Dashboard
+// Student Dashboard - Premium Version
 require_once __DIR__ . '/../../config/config.php';
 use SkillMaster\Auth\RoleMiddleware;
 use SkillMaster\Models\Enrollment;
@@ -58,13 +58,186 @@ $page_title = 'Student Dashboard - ' . APP_NAME;
     
     <!-- Template Stylesheet -->
     <link href="../assets/css/style.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --teal-primary: #06BBCC;
+            --teal-dark: #0598A6;
+            --teal-light: #E6F8FA;
+            --navy-dark: #181d38;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F0FBFC 0%, #E6F8FA 100%);
+        }
+        
+        /* Premium Header */
+        .premium-header {
+            background: linear-gradient(135deg, #06BBCC, #0598A6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            border: none;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(6, 187, 204, 0.2);
+        }
+        
+        .stat-card .stat-icon {
+            position: absolute;
+            right: -15px;
+            bottom: -15px;
+            font-size: 80px;
+            opacity: 0.15;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: none;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(6, 187, 204, 0.1);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid var(--teal-light);
+        }
+        
+        .card-title {
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-bottom: 0;
+        }
+        
+        /* Course Items */
+        .course-item {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .course-item:hover {
+            background-color: var(--teal-light);
+            border-left-color: var(--teal-primary);
+            transform: translateX(5px);
+        }
+        
+        /* Assignment Items */
+        .assignment-item {
+            transition: all 0.2s ease;
+        }
+        
+        .assignment-item:hover {
+            background-color: var(--teal-light);
+            transform: translateX(5px);
+        }
+        
+        /* Progress Bar */
+        .progress-custom {
+            height: 8px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+        }
+        
+        .progress-bar-custom {
+            background: linear-gradient(90deg, #06BBCC, #0598A6);
+            border-radius: 10px;
+        }
+        
+        /* Table Styling */
+        .table-custom {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .table-custom thead th {
+            background: linear-gradient(135deg, #06BBCC, #0598A6);
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: var(--teal-light);
+        }
+        
+        /* Badge Styling */
+        .badge-grade-A { background: linear-gradient(135deg, #198754, #157347); color: white; }
+        .badge-grade-B { background: linear-gradient(135deg, #0dcaf0, #0aa5c6); color: #000; }
+        .badge-grade-C { background: linear-gradient(135deg, #ffc107, #e0a800); color: #000; }
+        .badge-grade-D { background: linear-gradient(135deg, #fd7e14, #e06e0c); color: white; }
+        .badge-grade-F { background: linear-gradient(135deg, #dc3545, #bb2d3b); color: white; }
+        
+        /* Button Styling */
+        .btn-outline-teal {
+            border: 2px solid var(--teal-primary);
+            color: var(--teal-primary);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-teal:hover {
+            background: linear-gradient(135deg, #06BBCC, #0598A6);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Welcome Avatar */
+        .welcome-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #06BBCC, #0598A6);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .welcome-avatar i {
+            font-size: 28px;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Navbar Start -->
+    <!-- Premium Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
         <a href="index.php" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i><?php echo APP_NAME; ?></h2>
+            <h2 class="m-0 text-primary"><i class="fa fa-crown me-2"></i><?php echo APP_NAME; ?></h2>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -80,199 +253,253 @@ $page_title = 'Student Dashboard - ' . APP_NAME;
             </div>
         </div>
     </nav>
-    <!-- Navbar End -->
+    <!-- Premium Navbar End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-primary py-4 mb-5">
-        <div class="container">
-            <div class="row">
+    <!-- Premium Header Start -->
+    <div class="container-fluid premium-header py-5 mb-5">
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center">
                 <div class="col-12 text-center">
-                    <h1 class="text-white">Welcome Back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h1>
-                    <p class="text-white mb-0">Continue your learning journey</p>
+                    <div class="welcome-avatar d-inline-flex mb-3">
+                        <i class="fa fa-user-graduate"></i>
+                    </div>
+                    <h1 class="text-white display-4 fw-bold mb-2">Welcome Back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h1>
+                    <p class="text-white opacity-75 fs-5 mb-0">Continue your learning journey and achieve your goals</p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Header End -->
+    <!-- Premium Header End -->
 
     <!-- Dashboard Content Start -->
     <div class="container-xxl py-4">
         <div class="container">
             
-            <!-- Stats Cards -->
+            <!-- Stats Cards Row -->
             <div class="row g-4 mb-5">
                 <div class="col-lg-3 col-md-6">
-                    <div class="bg-primary text-white rounded p-4 text-center">
-                        <i class="fa fa-book fa-3x mb-3"></i>
-                        <h2 class="mb-0"><?php echo $enrolledCourses['total']; ?></h2>
-                        <p class="mb-0">Active Courses</p>
+                    <div class="stat-card text-white p-4" style="background: linear-gradient(135deg, #06BBCC, #0598A6);">
+                        <div class="stat-icon"><i class="fa fa-book"></i></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-white-50 mb-2">Active Courses</h6>
+                                <h2 class="text-white mb-0"><?php echo $enrolledCourses['total']; ?></h2>
+                            </div>
+                            <i class="fa fa-book-open fa-3x opacity-50"></i>
+                        </div>
+                        <div class="mt-3 small text-white-50">
+                            <i class="fa fa-arrow-right me-1"></i> Currently enrolled
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="bg-success text-white rounded p-4 text-center">
-                        <i class="fa fa-check-circle fa-3x mb-3"></i>
-                        <h2 class="mb-0"><?php echo $completedCount; ?></h2>
-                        <p class="mb-0">Completed Courses</p>
+                    <div class="stat-card text-white p-4" style="background: linear-gradient(135deg, #198754, #157347);">
+                        <div class="stat-icon"><i class="fa fa-check-circle"></i></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-white-50 mb-2">Completed Courses</h6>
+                                <h2 class="text-white mb-0"><?php echo $completedCount; ?></h2>
+                            </div>
+                            <i class="fa fa-graduation-cap fa-3x opacity-50"></i>
+                        </div>
+                        <div class="mt-3 small text-white-50">
+                            <i class="fa fa-trophy me-1"></i> Successfully completed
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="bg-warning text-dark rounded p-4 text-center">
-                        <i class="fa fa-tasks fa-3x mb-3"></i>
-                        <h2 class="mb-0"><?php echo $pendingAssignments['total']; ?></h2>
-                        <p class="mb-0">Pending Assignments</p>
+                    <div class="stat-card text-dark p-4" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+                        <div class="stat-icon"><i class="fa fa-tasks"></i></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-dark-50 mb-2">Pending Assignments</h6>
+                                <h2 class="text-dark mb-0"><?php echo $pendingAssignments['total']; ?></h2>
+                            </div>
+                            <i class="fa fa-clipboard-list fa-3x opacity-50"></i>
+                        </div>
+                        <div class="mt-3 small text-dark-50">
+                            <i class="fa fa-hourglass-half me-1"></i> Awaiting submission
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="bg-info text-white rounded p-4 text-center">
-                        <i class="fa fa-chart-line fa-3x mb-3"></i>
-                        <h2 class="mb-0"><?php echo $totalEnrolled > 0 ? round(($completedCount / $totalEnrolled) * 100) : 0; ?>%</h2>
-                        <p class="mb-0">Overall Progress</p>
+                    <div class="stat-card text-white p-4" style="background: linear-gradient(135deg, #0dcaf0, #0aa5c6);">
+                        <div class="stat-icon"><i class="fa fa-chart-line"></i></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-white-50 mb-2">Overall Progress</h6>
+                                <h2 class="text-white mb-0"><?php echo $totalEnrolled > 0 ? round(($completedCount / $totalEnrolled) * 100) : 0; ?>%</h2>
+                            </div>
+                            <i class="fa fa-chart-simple fa-3x opacity-50"></i>
+                        </div>
+                        <div class="mt-3 small text-white-50">
+                            <div class="progress progress-custom mt-2">
+                                <div class="progress-bar progress-bar-custom" style="width: <?php echo $totalEnrolled > 0 ? round(($completedCount / $totalEnrolled) * 100) : 0; ?>%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="row g-4">
-                <!-- My Courses -->
+                <!-- My Courses Section -->
                 <div class="col-lg-6">
-                    <div class="bg-light rounded p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">My Active Courses</h5>
-                            <a href="courses/enrolled.php" class="btn btn-sm btn-primary">View All</a>
+                    <div class="dashboard-card">
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <h5 class="card-title"><i class="fa fa-book me-2 text-primary"></i>My Active Courses</h5>
+                            <a href="courses/enrolled.php" class="btn btn-sm btn-outline-teal">View All</a>
                         </div>
-                        
-                        <?php if (empty($enrolledCourses['enrollments'])): ?>
-                            <div class="text-center py-4">
-                                <i class="fa fa-book-open fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">You haven't enrolled in any courses yet.</p>
-                                <a href="courses/browse.php" class="btn btn-primary btn-sm">Browse Courses</a>
-                            </div>
-                        <?php else: ?>
-                            <div class="list-group">
+                        <div class="p-4">
+                            <?php if (empty($enrolledCourses['enrollments'])): ?>
+                                <div class="text-center py-4">
+                                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-book-open fa-3x text-primary"></i>
+                                    </div>
+                                    <p class="text-muted mb-3">You haven't enrolled in any courses yet.</p>
+                                    <a href="courses/browse.php" class="btn btn-primary" style="background: linear-gradient(135deg, #06BBCC, #0598A6); border: none;">
+                                        Browse Courses
+                                    </a>
+                                </div>
+                            <?php else: ?>
                                 <?php foreach ($enrolledCourses['enrollments'] as $enrollment): ?>
-                                    <a href="courses/details.php?id=<?php echo $enrollment['course_id']; ?>" class="list-group-item list-group-item-action">
+                                    <a href="courses/details.php?id=<?php echo $enrollment['course_id']; ?>" class="course-item text-decoration-none d-block p-3 rounded mb-2">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <h6 class="mb-1"><?php echo htmlspecialchars($enrollment['course_title']); ?></h6>
-                                                <small class="text-muted">Instructor: <?php echo htmlspecialchars($enrollment['instructor_name']); ?></small>
+                                                <h6 class="mb-1" style="color: #181d38;"><?php echo htmlspecialchars($enrollment['course_title']); ?></h6>
+                                                <small class="text-muted"><i class="fa fa-user-tie me-1"></i> <?php echo htmlspecialchars($enrollment['instructor_name']); ?></small>
                                             </div>
                                             <div class="text-end">
-                                                <small class="text-primary"><?php echo $enrollment['credits']; ?> Credits</small>
+                                                <span class="badge bg-primary rounded-pill"><?php echo $enrollment['credits']; ?> Credits</span>
                                                 <br>
-                                                <small class="text-success">Active</small>
+                                                <small class="text-success"><i class="fa fa-check-circle me-1"></i> Active</small>
                                             </div>
                                         </div>
-                                        <div class="progress mt-2" style="height: 5px;">
-                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        <div class="progress progress-custom mt-2">
+                                            <div class="progress-bar progress-bar-custom" style="width: 0%"></div>
                                         </div>
+                                        <small class="text-muted">0% Complete</small>
                                     </a>
                                 <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Pending Assignments -->
+                <!-- Pending Assignments Section -->
                 <div class="col-lg-6">
-                    <div class="bg-light rounded p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Pending Assignments</h5>
-                            <a href="assignments/pending.php" class="btn btn-sm btn-primary">View All</a>
+                    <div class="dashboard-card">
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <h5 class="card-title"><i class="fa fa-tasks me-2 text-primary"></i>Pending Assignments</h5>
+                            <a href="assignments/pending.php" class="btn btn-sm btn-outline-teal">View All</a>
                         </div>
-                        
-                        <?php if (empty($pendingAssignments['assignments'])): ?>
-                            <div class="text-center py-4">
-                                <i class="fa fa-check-circle fa-3x text-success mb-3"></i>
-                                <p class="text-muted">No pending assignments. Great job!</p>
-                            </div>
-                        <?php else: ?>
-                            <div class="list-group">
+                        <div class="p-4">
+                            <?php if (empty($pendingAssignments['assignments'])): ?>
+                                <div class="text-center py-4">
+                                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-check-circle fa-3x text-success"></i>
+                                    </div>
+                                    <p class="text-muted mb-0">No pending assignments. Great job!</p>
+                                </div>
+                            <?php else: ?>
                                 <?php foreach ($pendingAssignments['assignments'] as $assignment): ?>
-                                    <div class="list-group-item">
+                                    <div class="assignment-item p-3 rounded mb-2">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <h6 class="mb-1"><?php echo htmlspecialchars($assignment['title']); ?></h6>
-                                                <small class="text-muted">Course: <?php echo htmlspecialchars($assignment['course_title']); ?></small>
+                                                <h6 class="mb-1" style="color: #181d38;"><?php echo htmlspecialchars($assignment['title']); ?></h6>
+                                                <small class="text-muted"><i class="fa fa-book me-1"></i> <?php echo htmlspecialchars($assignment['course_title']); ?></small>
                                                 <br>
-                                                <small class="text-danger"><i class="fa fa-calendar-alt me-1"></i>Due: <?php echo date('M d, Y', strtotime($assignment['due_date'])); ?></small>
+                                                <small class="text-danger"><i class="fa fa-calendar-alt me-1"></i> Due: <?php echo date('M d, Y', strtotime($assignment['due_date'])); ?></small>
                                             </div>
-                                            <a href="assignments/submit.php?id=<?php echo $assignment['id']; ?>" class="btn btn-primary btn-sm">Submit</a>
+                                            <a href="assignments/submit.php?id=<?php echo $assignment['id']; ?>" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #06BBCC, #0598A6); border: none;">
+                                                Submit
+                                            </a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="row g-4 mt-2">
-                <!-- Recent Grades -->
+                <!-- Recent Grades Section -->
                 <div class="col-lg-6">
-                    <div class="bg-light rounded p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Recent Grades</h5>
-                            <a href="grades/index.php" class="btn btn-sm btn-primary">View All</a>
+                    <div class="dashboard-card">
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <h5 class="card-title"><i class="fa fa-star me-2 text-primary"></i>Recent Grades</h5>
+                            <a href="grades/index.php" class="btn btn-sm btn-outline-teal">View All</a>
                         </div>
-                        
-                        <?php if (empty($recentGrades)): ?>
-                            <div class="text-center py-4">
-                                <i class="fa fa-chart-simple fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">No grades available yet.</p>
-                            </div>
-                        <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Assignment</th>
-                                            <th>Course</th>
-                                            <th>Grade</th>
-                                            <th>Letter</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($recentGrades as $grade): ?>
+                        <div class="p-4">
+                            <?php if (empty($recentGrades)): ?>
+                                <div class="text-center py-4">
+                                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-chart-line fa-3x text-muted"></i>
+                                    </div>
+                                    <p class="text-muted mb-0">No grades available yet.</p>
+                                </div>
+                            <?php else: ?>
+                                <div class="table-responsive">
+                                    <table class="table table-custom table-hover mb-0">
+                                        <thead>
                                             <tr>
-                                                <td><?php echo htmlspecialchars($grade['assignment_title']); ?></td>
-                                                <td><?php echo htmlspecialchars($grade['course_title']); ?></td>
-                                                <td><?php echo $grade['grade_value']; ?>%</td>
-                                                <td><span class="badge bg-<?php echo $grade['letter_grade'] === 'A' ? 'success' : ($grade['letter_grade'] === 'F' ? 'danger' : 'warning'); ?>"><?php echo $grade['letter_grade']; ?></span></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endif; ?>
+                                                <th>Assignment</th>
+                                                <th>Course</th>
+                                                <th>Grade</th>
+                                             </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($recentGrades as $grade): ?>
+                                                <tr>
+                                                    <td class="fw-bold"><?php echo htmlspecialchars($grade['assignment_title']); ?></td>
+                                                    <td><?php echo htmlspecialchars($grade['course_title']); ?></td>
+                                                    <td>
+                                                        <span class="badge badge-grade-<?php echo $grade['letter_grade']; ?> px-3 py-2">
+                                                            <?php echo $grade['grade_value']; ?>% (<?php echo $grade['letter_grade']; ?>)
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Overdue Assignments -->
+                <!-- Overdue Assignments Section -->
                 <div class="col-lg-6">
-                    <div class="bg-light rounded p-4">
-                        <h5 class="mb-3">Overdue Assignments</h5>
-                        
-                        <?php if (empty($overdueAssignments['assignments'])): ?>
-                            <div class="text-center py-4">
-                                <i class="fa fa-clock fa-3x text-success mb-3"></i>
-                                <p class="text-muted">No overdue assignments. You're on track!</p>
-                            </div>
-                        <?php else: ?>
-                            <div class="list-group">
+                    <div class="dashboard-card">
+                        <div class="card-header-custom">
+                            <h5 class="card-title"><i class="fa fa-exclamation-triangle me-2 text-danger"></i>Overdue Assignments</h5>
+                        </div>
+                        <div class="p-4">
+                            <?php if (empty($overdueAssignments['assignments'])): ?>
+                                <div class="text-center py-4">
+                                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-clock fa-3x text-success"></i>
+                                    </div>
+                                    <p class="text-muted mb-0">No overdue assignments. You're on track!</p>
+                                </div>
+                            <?php else: ?>
                                 <?php foreach ($overdueAssignments['assignments'] as $assignment): ?>
-                                    <div class="list-group-item list-group-item-danger">
+                                    <div class="border border-danger rounded p-3 mb-2" style="background-color: rgba(220, 53, 69, 0.05);">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <h6 class="mb-1"><?php echo htmlspecialchars($assignment['title']); ?></h6>
-                                                <small>Course: <?php echo htmlspecialchars($assignment['course_title']); ?></small>
+                                                <h6 class="mb-1 text-danger"><?php echo htmlspecialchars($assignment['title']); ?></h6>
+                                                <small class="text-muted"><i class="fa fa-book me-1"></i> <?php echo htmlspecialchars($assignment['course_title']); ?></small>
                                                 <br>
-                                                <small class="text-danger"><i class="fa fa-exclamation-triangle me-1"></i>Due: <?php echo date('M d, Y', strtotime($assignment['due_date'])); ?> (Overdue)</small>
+                                                <small class="text-danger"><i class="fa fa-exclamation-triangle me-1"></i> Due: <?php echo date('M d, Y', strtotime($assignment['due_date'])); ?> (Overdue)</small>
                                             </div>
-                                            <a href="assignments/submit.php?id=<?php echo $assignment['id']; ?>" class="btn btn-danger btn-sm">Submit Late</a>
+                                            <a href="assignments/submit.php?id=<?php echo $assignment['id']; ?>" class="btn btn-danger btn-sm">
+                                                Submit Late
+                                            </a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -300,9 +527,31 @@ $page_title = 'Student Dashboard - ' . APP_NAME;
     </div>
     <!-- Footer End -->
 
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="background-color: #06BBCC; border-color: #06BBCC;"><i class="bi bi-arrow-up"></i></a>
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/main.js"></script>
+    
+    <script>
+        // Smooth back to top
+        document.querySelector('.back-to-top')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Add animation to stats cards on load
+        document.querySelectorAll('.stat-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    </script>
 </body>
 </html>

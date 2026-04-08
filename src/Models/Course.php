@@ -101,6 +101,15 @@ class Course
         ];
     }
     
+	    /**
+     * Get course count by instructor
+     */
+    public function getCourseCountByInstructor($instructorId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM courses WHERE instructor_id = ? AND deleted_at IS NULL");
+        $stmt->execute([$instructorId]);
+        return $stmt->fetch()['count'];
+    }
     /**
      * Get single course by ID or slug
      */

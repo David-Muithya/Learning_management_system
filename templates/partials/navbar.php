@@ -15,7 +15,7 @@
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                 <div class="dropdown-menu fade-down m-0">
                     <a href="<?php echo PUBLIC_URL; ?>/instructors.php" class="dropdown-item">Our Instructors</a>
-                    <a href="<?php echo PUBLIC_URL; ?>/testimonials.php" class="dropdown-item">Testimonials</a>
+                    <a href="<?php echo PUBLIC_URL; ?>/testimonials.php" class="dropdown-item">testimonials</a>
                     <a href="<?php echo PUBLIC_URL; ?>/apply-instructor.php" class="dropdown-item">Become an Instructor</a>
                 </div>
             </div>

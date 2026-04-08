@@ -294,7 +294,7 @@
 }
 
 
-/*** Testimonial ***/
+/*** testimonial ***/
 .testimonial-carousel::before {
     position: absolute;
     content: "";

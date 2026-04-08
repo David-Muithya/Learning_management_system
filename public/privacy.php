@@ -116,7 +116,7 @@ $page_title = 'Privacy Policy - ' . APP_NAME;
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu fade-down m-0">
                         <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                        <a href="testimonial.php" class="dropdown-item">Testimonials</a>
+                        <a href="testimonial.php" class="dropdown-item">testimonials</a>
                         <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
                     </div>
                 </div>

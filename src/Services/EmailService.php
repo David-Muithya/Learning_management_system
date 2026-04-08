@@ -45,7 +45,6 @@ class EmailService
             
             // Sender
             $this->mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
-            $this->mail->addReplyTo(SMTP_REPLY_TO, SMTP_FROM_NAME);
             
             // Content
             $this->mail->isHTML(true);
@@ -63,7 +62,7 @@ class EmailService
     /**
      * Send email
      */
-    public function send($to, $subject, $body, $altBody = null)
+    public function send($to, $subject, $body, $altBody = null, $replyToEmail = null, $replyToName = null)
     {
         if (!$this->isConfigured) {
             error_log("Email not sent: SMTP not configured");
@@ -73,6 +72,17 @@ class EmailService
         try {
             $this->mail->clearAddresses();
             $this->mail->addAddress($to);
+
+            if (method_exists($this->mail, 'clearReplyTos')) {
+                $this->mail->clearReplyTos();
+            }
+
+            if (!empty($replyToEmail)) {
+                $this->mail->addReplyTo($replyToEmail, $replyToName ?? $replyToEmail);
+            } else {
+                $this->mail->addReplyTo(SMTP_REPLY_TO, SMTP_FROM_NAME);
+            }
+
             $this->mail->Subject = $subject;
             $this->mail->Body = $body;
             
@@ -118,7 +128,7 @@ class EmailService
                         <p>Hello <strong>" . htmlspecialchars($name) . "</strong>,</p>
                         <p>Thank you for joining " . APP_NAME . "! We're excited to have you on board.</p>
                         <p>You can now start exploring our courses and begin your learning journey.</p>
-                        <p><a href='" . BASE_URL . "/login.php' class='button'>Login to Your Account</a></p>
+                        <p><a href='" . LOGIN_URL . "' class='button'>Login to Your Account</a></p>
                         <p>If you have any questions, feel free to contact our support team.</p>
                         <p>Happy Learning!<br>The " . APP_NAME . " Team</p>
                     </div>
@@ -165,7 +175,7 @@ class EmailService
                         <p>Congratulations! Your instructor application has been approved.</p>
                         $passwordMessage
                         <p>You can now log in and start creating your courses.</p>
-                        <p><a href='" . BASE_URL . "/login.php' class='button'>Login to Your Account</a></p>
+                        <p><a href='" . LOGIN_URL . "' class='button'>Login to Your Account</a></p>
                         <p>We look forward to having you share your expertise with our students!</p>
                         <p>Best regards,<br>The " . APP_NAME . " Team</p>
                     </div>
@@ -296,7 +306,7 @@ class EmailService
                         <p>Hello <strong>" . htmlspecialchars($name) . "</strong>,</p>
                         <p>We are pleased to inform you that your instructor application has been <strong style='color: green;'>APPROVED</strong>!</p>
                         <p>You can now log in to your instructor dashboard and start creating your courses.</p>
-                        <p><a href='" . BASE_URL . "/login.php' class='button'>Login to Your Account</a></p>
+                        <p><a href='" . LOGIN_URL . "' class='button'>Login to Your Account</a></p>
                         <p>We look forward to seeing your courses!</p>
                         <p>Welcome to the team,<br>The " . APP_NAME . " Team</p>
                     </div>

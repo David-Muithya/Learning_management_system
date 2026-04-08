@@ -1,5 +1,5 @@
 <?php
-// Testimonials Page
+// testimonials Page
 require_once __DIR__ . '/../config/config.php';
 
 // For now, we'll use static testimonials from the database
@@ -16,21 +16,21 @@ $testimonials = [
     [
         'name' => 'Brian Kamau',
         'profession' => 'Data Analyst',
-        'image' => 'testimonial-2.jpg',
+        'image' => 'kamau.jpg',
         'message' => 'The data science program is top-notch! The hands-on projects gave me real-world experience. I now work as a data analyst at a leading tech company.',
         'rating' => 5
     ],
     [
         'name' => 'Carol Muthoni',
         'profession' => 'Full Stack Developer',
-        'image' => 'testimonial-3.jpg',
+        'image' => 'carol.jpg',
         'message' => 'I love the flexibility of learning at my own pace. The PHP and MySQL course was excellent! The community support is amazing and I\'ve made great connections.',
         'rating' => 5
     ],
     [
         'name' => 'David Omondi',
         'profession' => 'Mobile App Developer',
-        'image' => 'testimonial-4.jpg',
+        'image' => 'samuel.jpg',
         'message' => 'The React Native course helped me build my first mobile app! The instructors are knowledgeable and always ready to help. Highly recommend SkillMaster!',
         'rating' => 5
     ],
@@ -44,13 +44,13 @@ $testimonials = [
     [
         'name' => 'Francis Mwangi',
         'profession' => 'Cybersecurity Analyst',
-        'image' => 'testimonial-2.jpg',
+        'image' => 'omondi.png',
         'message' => 'The cybersecurity course gave me practical skills that I use daily at work. The labs and real-world scenarios were very helpful.',
         'rating' => 5
     ]
 ];
 
-$page_title = 'Testimonials - ' . APP_NAME;
+$page_title = 'testimonials - ' . APP_NAME;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -132,7 +132,7 @@ $page_title = 'Testimonials - ' . APP_NAME;
                     <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu fade-down m-0">
                         <a href="instructors.php" class="dropdown-item">Our Instructors</a>
-                        <a href="testimonial.php" class="dropdown-item active">Testimonials</a>
+                        <a href="testimonial.php" class="dropdown-item active">testimonials</a>
                         <a href="apply-instructor.php" class="dropdown-item">Become an Instructor</a>
                     </div>
                 </div>
@@ -156,12 +156,12 @@ $page_title = 'Testimonials - ' . APP_NAME;
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Testimonials</h1>
+                    <h1 class="display-3 text-white animated slideInDown">testimonials</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
                             <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Testimonials</li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">testimonials</li>
                         </ol>
                     </nav>
                 </div>
@@ -170,16 +170,16 @@ $page_title = 'Testimonials - ' . APP_NAME;
     </div>
     <!-- Header End -->
 
-    <!-- Testimonials Start -->
+    <!-- testimonials Start -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 class="section-title bg-white text-center text-primary px-3">Testimonials</h6>
+                <h6 class="section-title bg-white text-center text-primary px-3">testimonials</h6>
                 <h1 class="mb-3">What Our Students Say</h1>
                 <p class="mb-5">Don't just take our word for it - hear from our successful students</p>
             </div>
             
-            <!-- Testimonials Grid -->
+            <!-- testimonials Grid -->
             <div class="row g-4">
                 <?php foreach ($testimonials as $index => $testimonial): ?>
                     <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.<?php echo ($index % 3 + 1) * 1; ?>s">
@@ -258,7 +258,7 @@ $page_title = 'Testimonials - ' . APP_NAME;
             </div>
         </div>
     </div>
-    <!-- Testimonials End -->
+    <!-- testimonials End -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

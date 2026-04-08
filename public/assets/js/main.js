@@ -83,7 +83,7 @@
     });
 
 
-    // Testimonials carousel
+    // testimonials carousel
     $(".testimonial-carousel").owlCarousel({
         autoplay: true,
         smartSpeed: 1000,
