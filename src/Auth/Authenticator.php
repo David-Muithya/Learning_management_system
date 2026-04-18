@@ -53,6 +53,7 @@ class Authenticator
         $_SESSION['user_role'] = $user['role'];
         $_SESSION['user_avatar'] = $user['profile_pic'];
         $_SESSION['login_time'] = time();
+        $_SESSION['is_admin_authenticated'] = $user['role'] === 'admin';
 
         // Debug logging
         error_log("Login successful for user: {$user['email']} (Role: {$user['role']})");

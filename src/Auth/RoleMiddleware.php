@@ -24,17 +24,76 @@ class RoleMiddleware
     }
 
     /**
+     * Build the proper login redirect for each role.
+     */
+    private static function redirectToLogin($requiredRole)
+    {
+        $target = $requiredRole === 'admin' ? ADMIN_URL . '/login.php' : self::resolveRedirectUrl('/login.php');
+        header('Location: ' . $target);
+        exit;
+    }
+
+    /**
+     * Determine the active session timeout for the requested role.
+     */
+    private static function getSessionTimeout($requiredRole)
+    {
+        if ($requiredRole === 'admin') {
+            return defined('ADMIN_SESSION_TIMEOUT') ? ADMIN_SESSION_TIMEOUT : 1800;
+        }
+
+        return defined('SESSION_TIMEOUT') ? SESSION_TIMEOUT : 7200;
+    }
+
+    /**
+     * Check if we have a valid authenticated session.
+     */
+    private static function hasValidSession($requiredRole)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return false;
+        }
+
+        if (empty($_SESSION['user_id']) || empty($_SESSION['user_role']) || empty($_SESSION['login_time'])) {
+            return false;
+        }
+
+        if ($requiredRole === 'admin' && empty($_SESSION['is_admin_authenticated'])) {
+            return false;
+        }
+
+        $timeout = self::getSessionTimeout($requiredRole);
+        if (time() - $_SESSION['login_time'] > $timeout) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Detect if the current request is already targeting the login route.
+     */
+    private static function isLoginRoute($requiredRole)
+    {
+        if ($requiredRole !== 'admin') {
+            return false;
+        }
+
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        return stripos($uri, '/admin/login.php') !== false;
+    }
+
+    /**
      * Check if user has required role
      */
     public static function check($requiredRole)
     {
-        if (!isset($_SESSION['user_role'])) {
-            if ($requiredRole === 'admin') {
-                header('Location: ' . ADMIN_URL . '/login.php');
-            } else {
-                header('Location: ' . self::resolveRedirectUrl('/login.php'));
+        if (!self::hasValidSession($requiredRole)) {
+            if (self::isLoginRoute($requiredRole)) {
+                return;
             }
-            exit;
+
+            self::redirectToLogin($requiredRole);
         }
         
         if ($_SESSION['user_role'] !== $requiredRole && $requiredRole !== 'any') {

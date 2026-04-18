@@ -60,21 +60,28 @@ class Grade
     }
     
     /**
-     * Get grades by student
+     * Get grades by student with feedback from submissions
      */
     public function getByStudent($studentId)
     {
         $stmt = $this->db->prepare("
-            SELECT g.*, a.title as assignment_title, a.max_points,
-                   c.title as course_title, c.id as course_id
+            SELECT 
+                g.*, 
+                a.title as assignment_title, 
+                a.max_points, 
+                a.id as assignment_id,
+                c.title as course_title, 
+                c.id as course_id,
+                s.feedback as feedback
             FROM {$this->table} g
             LEFT JOIN assignments a ON g.assignment_id = a.id
             LEFT JOIN enrollments e ON g.enrollment_id = e.id
             LEFT JOIN courses c ON a.course_id = c.id
+            LEFT JOIN submissions s ON s.assignment_id = a.id AND s.student_id = ?
             WHERE e.student_id = ?
             ORDER BY c.title ASC, a.due_date ASC
         ");
-        $stmt->execute([$studentId]);
+        $stmt->execute([$studentId, $studentId]);
         return $stmt->fetchAll();
     }
     

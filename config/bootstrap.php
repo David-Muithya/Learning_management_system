@@ -118,10 +118,10 @@ if (session_status() === PHP_SESSION_NONE) {
     
     // Set session name based on route: separate admin sessions from public sessions
     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-    $sessionName = 'skillmaster_public_session';
+    $sessionName = defined('PUBLIC_SESSION_NAME') ? PUBLIC_SESSION_NAME : 'skillmaster_public_session';
 
     if (strpos($requestUri, '/admin/') !== false) {
-        $sessionName = 'skillmaster_admin_session';
+        $sessionName = defined('ADMIN_SESSION_NAME') ? ADMIN_SESSION_NAME : 'skillmaster_admin_session';
     }
 
     session_name($sessionName);

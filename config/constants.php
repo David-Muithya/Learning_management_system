@@ -40,6 +40,8 @@ define('COURSE_UPLOAD_PATH', UPLOAD_PATH . 'courses/');
 // =============================================
 define('SESSION_TIMEOUT', 7200);
 define('ADMIN_SESSION_TIMEOUT', 1800);
+define('PUBLIC_SESSION_NAME', 'skillmaster_public_session');
+define('ADMIN_SESSION_NAME', 'skillmaster_admin_session');
 
 // =============================================
 // SECURITY CONFIGURATION
